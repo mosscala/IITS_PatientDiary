@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "env/bin/activate"
+    "python.pythonPath": "env/bin/python"
 
 
 }

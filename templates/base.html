@@ -6,42 +6,70 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <!--a class="navbar-brand" href="#">ONLINE PATIENT DIARY</a-->
+        <!--button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
-        </button>
+        </button-->
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
-            <li class="nav-item active">
+            <!--li class="nav-item active">
               <a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
+            </li-->
+            {% if currentvar=='dashboard' %}
+            <li class="nav-item active">
+            {% else %}
+            <li class="nav-item ">
+            {% endif %}
                 <a class="nav-link" href="/dashboard">Dashboard</a>
               </li>
-            <li class="nav-item">
+            {% if currentvar=='howareyou' %}
+            <li class="nav-item active">
+            {% else %}
+            <li class="nav-item ">
+            {% endif %}
               <a class="nav-link" href="/howareyou">New Entry</a>
             </li>
-            <li class="nav-item">
+            {% if currentvar=='history' %}
+            <li class="nav-item active">
+            {% else %}
+            <li class="nav-item ">
+            {% endif %}
                 <a class="nav-link" href="/history">History</a>
             </li>
-            <li class="nav-item">
+            {% if currentvar=='appointments' %}
+            <li class="nav-item active">
+            {% else %}
+            <li class="nav-item ">
+            {% endif %}
                 <a class="nav-link" href="/appointments">Appointments</a>
             </li>
-            <li class="nav-item">
+            {% if currentvar=='medication' %}
+            <li class="nav-item active">
+            {% else %}
+            <li class="nav-item ">
+            {% endif %}
                 <a class="nav-link" href="/medication">Medication</a>
             </li>
-            <li class="nav-item">
+            {% if currentvar=='login' %}
+            <li class="nav-item active">
+            {% else %}
+            <li class="nav-item ">
+            {% endif %}
                 <a class="nav-link" href="/login">Login</a>
             </li>
-            <li class="nav-item">
+            {% if currentvar=='signup' %}
+            <li class="nav-item active">
+            {% else %}
+            <li class="nav-item ">
+            {% endif %}
                 <a class="nav-link" href="/signup">Sign Up</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item ">
                 <a class="nav-link" href="/logout">Logout</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-            </li>
+            </li-->
+            <!--li class="nav-item">
+                <a class="nav-link disabled" href="/logout" tabindex="-1" aria-disabled="true">Logout</a>
+            </li-->
           </ul>
         </div>
       </nav>
