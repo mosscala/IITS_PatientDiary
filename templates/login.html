@@ -7,12 +7,15 @@
 {% block content %}
 
 <h1>Please log-in with your credentials</h1>
-<form>
+<form class="form-signin" method="POST" action="/login">
+    {{ form.hidden_tag() }}
     <label for="username">Username:</label><br>
-    <input type="text" id="username" name="username"><br>
-    <label for="pwd">Password:</label><br>
-    <input type="password" id="pwd" name="pwd"><br>
-    <input type="submit">
+    {{ form.username }}<br/>
+    <label for="pwd1">Password:</label><br>
+    {{ form.password }}<br/>
+    <label for="rememberme">Remember me?</label>
+    {{ form.remember }}<br/>
+    <input type="submit" value="Login">
 </form>
 
 {% endblock %}

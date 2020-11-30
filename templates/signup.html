@@ -7,15 +7,17 @@
 {% block content %}
 
 <h1>Please sign up with your credentials</h1>
-<form>
+<form class="form-signin" method="POST" action="/signup">
+    {{ form.hidden_tag() }}
     <label for="username">Username:</label><br>
-    <input type="text" id="username" name="username"><br>
+    {{ form.username }}<br/>
+    <label for="email">E-Mail:</label><br>
+    {{ form.email }}<br/>
     <label for="pwd1">Password:</label><br>
-    <input type="password" id="pwd1" name="pwd1"><br>
+    {{ form.password1 }}<br/>
     <label for="pwd2">Please confirm password:</label><br>
-    <input type="password" id="pwd2" name="pwd2"><br>
-    <input type="checkbox" id="medstaff" name="medstaff" value="Boat">
-    <label for="medstaff"> Are you a medical professional working in this hospital?</label><br>
+    {{ form.password2 }}<br/>
+    <label for="medstaff"> Are you a medical professional working in this hospital?</label>{{ form.mptoggle }}<br/>
     <input type="submit">
 </form>
 
