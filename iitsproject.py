@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import InputRequired, Length, Email, email_validator
+from wtforms.validators import InputRequired, Length, Email, email_validator, EqualTo
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "djfsdjf"
@@ -14,8 +14,8 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid e-mail'), Length(min=4, max=80)])
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
-    password1 = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-    password2 = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    password1 = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80), EqualTo('password2', message='Unequal passwords')])
+    password2 = PasswordField('confirm', validators=[InputRequired(), Length(min=8, max=80)])
     mptoggle = BooleanField('Not a patient?')
 
 @app.route("/")

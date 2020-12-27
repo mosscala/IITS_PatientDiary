@@ -6,13 +6,31 @@
 
 {% block content %}
 
+{% if medstaff == 'FALSE' %}
 <h1>How are you feeling today?</h1>
 <form>
     <label for="smptms">Type in symptoms:</label><br>
     <input type="text" id="smptms"><br>
     <label for="quantity">Overall Wellbeing (between 1 and 10):</label><br>
-    <input type="number" id="quantity" name="quantity" min="1" max="10"><br>
+    <input type="number" id="quantity" name="quantity" min="1" max="10" step="0.5" required><br>
     <input type="submit">
 </form>
+{% endif %}
+
+{% if medstaff == 'TRUE' %}
+<h1>How is the patient feeling today?</h1>
+<form>
+    <input type="button" value="Load from EMR"><br><br>
+    <label for="smptms">Type in Patient ID:</label><br>
+    <input type="text" id="smptms" required><br>
+    <label for="smptms">Type in Patient Name:</label><br>
+    <input type="text" id="smptms" required><br>
+    <label for="smptms">Type in symptoms:</label><br>
+    <input type="text" id="smptms"><br>
+    <label for="quantity">Overall Wellbeing (between 1 and 10):</label><br>
+    <input type="number" id="quantity" name="quantity" min="1" max="10" step="0.5" required><br>
+    <input type="submit">
+</form>
+{% endif %}
 
 {% endblock %}
