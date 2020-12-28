@@ -7,7 +7,7 @@
 {% block content %}
 
 <h1>An Overview over your current appointments and upcoming procedures</h1>
-<p>Here you'll be able to see a nice list soon!</p>
+{{ graph|safe }}
 
 {% if medstaff == 'TRUE' %}
 <h1>Add a new appointment here</h1>

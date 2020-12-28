@@ -2,6 +2,9 @@ from flask import Flask, redirect, url_for, render_template, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Length, Email, email_validator, EqualTo
+from flask_sqlalchemy import SQLAlchemy
+import sqlite3
+from database import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "djfsdjf"
@@ -17,6 +20,31 @@ class RegisterForm(FlaskForm):
     password1 = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80), EqualTo('password2', message='Unequal passwords')])
     password2 = PasswordField('confirm', validators=[InputRequired(), Length(min=8, max=80)])
     mptoggle = BooleanField('Not a patient?')
+
+
+@app.route("/howareyou",  methods=["POST", "GET"])
+def howareyou():
+
+    # if request.method == "POST":
+    #     new_symptom = request.form.get('symptoms')
+    #     new_wellbeingscore = request.form.get('quantity')
+    #     new_enty = HowAreYou(symptom=new_symptom, wbscore=new_wellbeingscore)
+    #     return printall()
+        
+    #     try:
+    #         db.session.add(new_entry)
+    #         db.session.commit()
+    #     except:
+    #         return"You clicked and it did not work"
+
+    if request.method == "POST":
+        new_symptom = request.form.get('symptoms')
+        new_wellbeingscore = request.form.get('quantity')
+        newentry(new_wellbeingscore, new_symptom)
+        return redirect(url_for("howareyou"))
+    
+    else:
+        return render_template("howareyou.html")
 
 @app.route("/")
 def index():
@@ -53,15 +81,14 @@ def dashboard():
 
 @app.route("/history")
 def history():
-    return render_template("history.html")
+    graph = createhistory()
+    return render_template("history.html", graph = graph)
+
 
 @app.route("/appointments")
 def appointments():
-    return render_template("appointments.html")
-
-@app.route("/howareyou")
-def howareyou():
-    return render_template("howareyou.html")
+    graph = createappointmenttable()
+    return render_template("appointments.html", graph = graph)
 
 @app.route("/medication")
 def medication():

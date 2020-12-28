@@ -5,8 +5,5 @@
 {% set currentvar = 'history' %}
 
 {% block content %}
-
-<h1>Check your past entries</h1>
-<p>Here you'll be able to see a nice graph soon!</p>
-
+{{ graph|safe }}
 {% endblock %}

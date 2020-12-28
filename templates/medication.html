@@ -6,8 +6,7 @@
 
 {% block content %}
 
-<h1>This is your current medication</h1>
-<p>Here you'll be able to see a nice list soon!</p>
+{{ graph|safe }}
 
 {% if medstaff == 'TRUE' %}
 <h1>Add a new pharmaceutical here:</h1>
