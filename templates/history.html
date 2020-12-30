@@ -5,5 +5,9 @@
 {% set currentvar = 'history' %}
 
 {% block content %}
-{{ graph|safe }}
+
+<h1>Normal {{medstaff}}</h1>
+
+<div class="container">{{ graph|safe }}</div>
+
 {% endblock %}

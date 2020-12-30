@@ -6,7 +6,14 @@
 
 {% block content %}
 
-<h1>This is your dashboard</h1>
-<p>Here you'll be able to see a nice list soon!</p>
+<h1>Normal {{medstaff}}</h1>
+
+{% if medstaff == '0' %}
+<h1>You are a patient</h1>
+{% endif %}
+
+{% if medstaff == '1' %}
+<h1>You are a medical staff</h1>
+{% endif %}
 
 {% endblock %}

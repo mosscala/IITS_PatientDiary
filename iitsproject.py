@@ -1,50 +1,25 @@
-from flask import Flask, redirect, url_for, render_template, request
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import InputRequired, Length, Email, email_validator, EqualTo
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, redirect, url_for, render_template, request, session
 import sqlite3
 from database import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "djfsdjf"
 
-class LoginForm(FlaskForm):
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-    remember = BooleanField('remember me')
-
-class RegisterForm(FlaskForm):
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid e-mail'), Length(min=4, max=80)])
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
-    password1 = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80), EqualTo('password2', message='Unequal passwords')])
-    password2 = PasswordField('confirm', validators=[InputRequired(), Length(min=8, max=80)])
-    mptoggle = BooleanField('Not a patient?')
-
-
 @app.route("/howareyou",  methods=["POST", "GET"])
 def howareyou():
-
-    # if request.method == "POST":
-    #     new_symptom = request.form.get('symptoms')
-    #     new_wellbeingscore = request.form.get('quantity')
-    #     new_enty = HowAreYou(symptom=new_symptom, wbscore=new_wellbeingscore)
-    #     return printall()
-        
-    #     try:
-    #         db.session.add(new_entry)
-    #         db.session.commit()
-    #     except:
-    #         return"You clicked and it did not work"
-
-    if request.method == "POST":
-        new_symptom = request.form.get('symptoms')
-        new_wellbeingscore = request.form.get('quantity')
-        newentry(new_wellbeingscore, new_symptom)
-        return redirect(url_for("howareyou"))
-    
+    if "medstaff" in session:
+        mdstf = session["medstaff"]
+        graph = createappointmenttable()
+        if request.method == "POST":
+            new_symptom = request.form.get('symptoms')
+            new_wellbeingscore = request.form.get('quantity')
+            newentry(new_wellbeingscore, new_symptom)
+            return redirect(url_for("howareyou", medstaff = str(mdstf)))
+        else:
+            return render_template("howareyou.html", medstaff = str(mdstf))
     else:
-        return render_template("howareyou.html")
+        return redirect(url_for("login"))
+
 
 @app.route("/")
 def index():
@@ -55,44 +30,124 @@ def index():
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
-    form = LoginForm()
+    
+    if request.method == "POST":
+        email = request.form.get('email')
+        password = request.form.get('psw')
+        remember = 1 if request.form.get('remember') == 'on' else 0
+        if email == fetchemail(email) and password == fetchpassword(email):
+            userid = session["userid"] = fetchrowid(email)
+            mdstf = session["medstaff"] = fetchmedstaff(email)
+            return redirect(url_for("history", medstaff = str(mdstf), userid = str(userid)))
+        if email == fetchemail(email) and password != fetchpassword(email):
+            return render_template("login.html", msg = '1')
+        if not fetchemail(email):
+            return render_template("login.html", msg = '2')
+    
+    else:
+        return render_template("login.html")
 
-    if form.validate_on_submit():
-        return '<h1>' + form.username.data + ' ' + form.password.data + ' ' + str(form.remember.data) + '</h1>'
+# @app.route("/signup", methods=["POST", "GET"])
+# def signup():
 
-    return render_template("login.html", form=form)
+#     if request.method == "POST":
+#         email = request.form.get('email')
+#         password = request.form.get('psw')
+#         passwordrpt = request.form.get('psw-repeat')
+#         remember = 1 if request.form.get('remember') == 'on' else 0
+#         medstaff = 1 if request.form.get('medstaff') == 'on' else 0
+#         if password != passwordrpt:
+#             return render_template("signup.html", msg = '2')
+#         if not fetchemail(email):
+#             newuser(email, password, remember, medstaff)
+#             return redirect(url_for("login", msg = '3'))
+#         elif fetchemail(email):
+#             return render_template("signup.html", msg = '1')
+
+#     else:
+#         return render_template("signup.html")
 
 @app.route("/signup", methods=["POST", "GET"])
 def signup():
-    form = RegisterForm()
+    if request.method == "POST":
+        email = request.form.get('email')
+        password = request.form.get('psw')
+        passwordrpt = request.form.get('psw-repeat')
+        medstaff = 0
+        remember = 1 if request.form.get('remember') == 'on' else 0
+        if password != passwordrpt:
+            return render_template("signup.html", msg = '2')
+        if not fetchemail(email):
+            newuser(email, password, remember, medstaff)
+            return render_template("signup", msg = '3')
+        elif fetchemail(email):
+            return render_template("signup.html", msg = '1')
+    else:
+        return render_template("signup.html")
 
-    if form.validate_on_submit():
-        return '<h1>' + form.username.data + ' ' + form.password1.data + ' ' + form.password2.data + ' ' + str(form.mptoggle.data) + ' ' + form.email.data + '</h1>'
-    
-    return render_template("signup.html", form=form)
+@app.route("/medauth", methods=["POST", "GET"])
+def medauth():
+
+    medauthnums = ('1234', '2345', '3456', '4567')
+    if request.method == "POST":
+        email = request.form.get('email')
+        password = request.form.get('psw')
+        passwordrpt = request.form.get('psw-repeat')
+        authnum = request.form.get('authnum')
+        medstaff = 1
+        remember = 1 if request.form.get('remember') == 'on' else 0
+        if authnum not in medauthnums:
+            return render_template("medauth.html", msg = '3')
+        if password != passwordrpt:
+            return render_template("medauth.html", msg = '2')
+        if not fetchemail(email):
+            newuser(email, password, remember, medstaff)
+            return render_template("medauth.html", msg = '4')
+        elif fetchemail(email):
+            return render_template("medauth.html", msg = '1')
+    else:
+        return render_template("medauth.html")
 
 @app.route("/logout")
 def logout():
+    session.pop("userid", None)
+    session.pop("medstaff", None)
     return redirect(url_for("login"))
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    if "medstaff" in session:
+        mdstf = session["medstaff"]
+        return render_template("dashboard.html", medstaff = str(mdstf))
+    else:
+        return redirect(url_for("login"))
 
 @app.route("/history")
-def history():
-    graph = createhistory()
-    return render_template("history.html", graph = graph)
-
+def history():        
+    if "medstaff" in session:
+        mdstf = session["medstaff"]
+        graph = createhistory()
+        return render_template("history.html", graph = graph, medstaff = str(mdstf))
+    else:
+        return redirect(url_for("login"))
 
 @app.route("/appointments")
 def appointments():
-    graph = createappointmenttable()
-    return render_template("appointments.html", graph = graph)
+        if "medstaff" in session:
+            mdstf = session["medstaff"]
+            graph = createappointmenttable()
+            return render_template("appointments.html", graph = graph, medstaff = str(mdstf))
+        else:
+            return redirect(url_for("login"))
 
 @app.route("/medication")
 def medication():
-    return render_template("medication.html")
+        if "medstaff" in session:
+            mdstf = session["medstaff"]
+            return render_template("medication.html", medstaff = str(mdstf))
+        else:
+            return redirect(url_for("login"))
 
 if __name__ == "__main__":
     app.run(port=1337, debug=True)
+

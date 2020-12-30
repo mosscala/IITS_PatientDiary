@@ -6,10 +6,11 @@
 
 {% block content %}
 
-<h1>An Overview over your current appointments and upcoming procedures</h1>
-{{ graph|safe }}
+<h1>Normal {{medstaff}}</h1>
 
-{% if medstaff == 'TRUE' %}
+<div class="container">{{ graph|safe }}</div>
+
+{% if medstaff == '1' %}
 <h1>Add a new appointment here</h1>
 <input type="button" value="Load from EMR"><br><br>
 <label for="smptms">Type in Patient ID:</label><br>

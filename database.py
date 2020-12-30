@@ -5,23 +5,74 @@ from plotly.offline import plot
 def printall():
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
-    c.execute("SELECT rowid, * FROM howareyou")
-    return list(sum(c.fetchall(), ()))
+    c.execute("SELECT rowid, * FROM users")
+    #return list(sum(c.fetchall(), ()))
+    return c.fetchall()
+
+def fetchemail(inputemail):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    c.execute("SELECT email FROM users WHERE email = ? ", (inputemail,))
+    
+    try:
+            return ''.join(c.fetchone())
+    except:
+        return False
+
+def fetchpassword(inputemail):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    
+    try:
+        c.execute("SELECT password FROM users WHERE email = ? ", (inputemail,))
+        return ''.join(c.fetchone())
+    except:
+        return False
+
+def fetchmedstaff(inputemail):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    
+    try:
+        c.execute("SELECT medstaff FROM users WHERE email = ? ", (inputemail,))
+        return c.fetchone()[0]
+    except:
+        return False
+
+def fetchrowid(inputemail):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    
+    try:
+        c.execute("SELECT rowid, * FROM users WHERE email = ? ", (inputemail,))
+        return c.fetchone()[0]
+    except:
+        return False
 
 def newentry(wbscore, symptom):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
     
-    c.execute(f"INSERT INTO howareyou VALUES (?,?,datetime('now', 'localtime'))", (wbscore, symptom))
+    c.execute("INSERT INTO howareyou VALUES (?,?,datetime('now', 'localtime'))", (wbscore, symptom))
 
     conn.commit()
     conn.close()
+
+def newuser(email, password, remember, medstaff):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    
+    c.execute("INSERT INTO users VALUES (?,?,?,?)", (email, password, remember, medstaff))
+
+    conn.commit()
+    conn.close()
+
 
 def newappointment(what, when, where, recurring, videolink, additinfo):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
     
-    c.execute(f"INSERT INTO appointments VALUES (?,?,?,?,?,?)", (when, where, what, videolink, additinfo, recurring))
+    c.execute("INSERT INTO appointments VALUES (?,?,?,?,?,?)", (when, where, what, videolink, additinfo, recurring))
 
     conn.commit()
     conn.close()
@@ -62,10 +113,10 @@ def createhistory():
     return plot(fig, include_plotlyjs=False, output_type='div')
 
 def createappointmenttable():
-
     fig = go.Figure(data=[go.Table(header=dict(values=['Procedure', 'Location', 'Appointment Time', 'Video', 'Additional Information', 'Recurring']),
-                 cells=dict(values=[['Colonoscopy'], ['Department F'], ['2020-12-28 09:56:34'], ['https://www.youtube.com/watch?v=wK2imf6w8Pw'], ['Please make sure to drink the laxatives the evening before! Also no dinner tonight!'], ['No']]))
+                 cells=dict(values=[['Colonoscopy'], ['Department F'], ['2020-12-28 09:56:34'], ['<a href=\'https://www.youtube.com/watch?v=wK2imf6w8Pw\'> Colonoscopy Video</a>'], ['Please make sure to drink the laxatives the evening before! Also no dinner tonight!'], ['No']]))
                      ])
+    fig.update_layout(title='Your Appointments')
                 
     return plot(fig, include_plotlyjs=False, output_type='div')
 
@@ -90,11 +141,11 @@ c = conn.cursor()
 #    recurring integer
 #    )""")
 
-# c.execute("""CREATE TABLE medication (
-#    when text,
-#    where text,
-#    what text,
-#    video text
+# c.execute("""CREATE TABLE users (
+#    email text,
+#    password text,
+#    remember integer,
+#    medstaff integer
 #    )""")
 
 #Creating a new entry
@@ -117,3 +168,11 @@ c = conn.cursor()
 #    symptoms text,
 #    time text
 #    )""")
+
+#Deleting a table
+#c.execute("DROP TABLE users")
+
+
+print(printall())
+print(fetchrowid('a@b.de'))
+print(fetchmedstaff('a@b.de'))

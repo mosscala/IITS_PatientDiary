@@ -6,9 +6,9 @@
 
 {% block content %}
 
-{{ graph|safe }}
+<h1>Normal {{medstaff}}</h1>
 
-{% if medstaff == 'TRUE' %}
+{% if medstaff == '1' %}
 <h1>Add a new pharmaceutical here:</h1>
 <form>
     <input type="button" value="Load from EMR"><br><br>

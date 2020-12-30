@@ -6,16 +6,31 @@
 
 {% block content %}
 
-<h1>Please log-in with your credentials</h1>
-<form class="form-signin" method="POST" action="/login">
-    {{ form.hidden_tag() }}
-    <label for="username">Username:</label><br>
-    {{ form.username }}<br/>
-    <label for="pwd1">Password:</label><br>
-    {{ form.password }}<br/>
-    <label for="rememberme">Remember me?</label>
-    {{ form.remember }}<br/>
-    <input type="submit" value="Login">
-</form>
+<div class="container">
+    <form class="form-login" method="POST" action="/login">
+    <label for="email"><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" name="email" required>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" required>
+
+    <button type="submit">Login</button>
+    <label>
+      <input type="checkbox" checked="checked" name="remember"> Remember me
+    </label>
+    </form>
+  </div>
+
+{% if msg == '1' %}
+<div class="alert alert-danger" role="alert">
+  Incorrect Password.
+</div>
+{% endif %}
+
+{% if msg == '2' %}
+<div class="alert alert-danger" role="alert">
+  No account with this e-mail address exists.
+</div>
+{% endif %}
 
 {% endblock %}

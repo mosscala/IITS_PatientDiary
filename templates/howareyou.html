@@ -6,18 +6,21 @@
 
 {% block content %}
 
-{% if medstaff == 'FALSE' %}
+<h1>Normal {{medstaff}}</h1>
+
+{% if medstaff == '0' %}
 <h1>How are you feeling today?</h1>
 <form action="/howareyou" METHOD="POST"> 
     <label for="smptms">Type in symptoms:</label><br>
-    <input type="text" id="smptms" name="symptoms"><br>
+    <!-- <input type="text" id="smptms" name="symptoms"><br> -->
+    <textarea id="smptms" name="symptoms"></textarea><br>
     <label for="quantity">Overall Wellbeing (between 1 and 10):</label><br>
-    <input type="number" id="quantity" name="quantity" min="1" max="10" step="1"><br>
+    <input type="range" id="quantity" name="quantity" min="1" max="10" value="5" class="slider" step="1"><br>
     <input type="submit" value="Save Entry" class="btn btn-secondary">
 </form>
 {% endif %}
 
-{% if medstaff == 'TRUE' %}
+{% if medstaff == '1' %}
 <h1>How is the patient feeling today?</h1>
 <form>
     <input type="button" value="Load from EMR"><br><br>
