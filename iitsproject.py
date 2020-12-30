@@ -5,6 +5,21 @@ from database import *
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "djfsdjf"
 
+# @app.route("/howareyou",  methods=["POST", "GET"])
+# def howareyou():
+#     if "medstaff" in session:
+#         mdstf = session["medstaff"]
+#         graph = createappointmenttable()
+#         if request.method == "POST":
+#             new_symptom = request.form.get('symptoms')
+#             new_wellbeingscore = request.form.get('quantity')
+#             newentry(new_wellbeingscore, new_symptom)
+#             return redirect(url_for("howareyou", medstaff = str(mdstf)))
+#         else:
+#             return render_template("howareyou.html", medstaff = str(mdstf))
+#     else:
+#         return redirect(url_for("login"))
+
 @app.route("/howareyou",  methods=["POST", "GET"])
 def howareyou():
     if "medstaff" in session:
@@ -13,7 +28,8 @@ def howareyou():
         if request.method == "POST":
             new_symptom = request.form.get('symptoms')
             new_wellbeingscore = request.form.get('quantity')
-            newentry(new_wellbeingscore, new_symptom)
+            userid = session["userid"]
+            newentrypatient(new_wellbeingscore, new_symptom, userid)
             return redirect(url_for("howareyou", medstaff = str(mdstf)))
         else:
             return render_template("howareyou.html", medstaff = str(mdstf))
@@ -38,7 +54,7 @@ def login():
         if email == fetchemail(email) and password == fetchpassword(email):
             userid = session["userid"] = fetchrowid(email)
             mdstf = session["medstaff"] = fetchmedstaff(email)
-            return redirect(url_for("history", medstaff = str(mdstf), userid = str(userid)))
+            return redirect(url_for("history"))
         if email == fetchemail(email) and password != fetchpassword(email):
             return render_template("login.html", msg = '1')
         if not fetchemail(email):
@@ -46,26 +62,6 @@ def login():
     
     else:
         return render_template("login.html")
-
-# @app.route("/signup", methods=["POST", "GET"])
-# def signup():
-
-#     if request.method == "POST":
-#         email = request.form.get('email')
-#         password = request.form.get('psw')
-#         passwordrpt = request.form.get('psw-repeat')
-#         remember = 1 if request.form.get('remember') == 'on' else 0
-#         medstaff = 1 if request.form.get('medstaff') == 'on' else 0
-#         if password != passwordrpt:
-#             return render_template("signup.html", msg = '2')
-#         if not fetchemail(email):
-#             newuser(email, password, remember, medstaff)
-#             return redirect(url_for("login", msg = '3'))
-#         elif fetchemail(email):
-#             return render_template("signup.html", msg = '1')
-
-#     else:
-#         return render_template("signup.html")
 
 @app.route("/signup", methods=["POST", "GET"])
 def signup():
@@ -79,7 +75,7 @@ def signup():
             return render_template("signup.html", msg = '2')
         if not fetchemail(email):
             newuser(email, password, remember, medstaff)
-            return render_template("signup", msg = '3')
+            return render_template("signup.html", msg = '3')
         elif fetchemail(email):
             return render_template("signup.html", msg = '1')
     else:
@@ -126,7 +122,8 @@ def dashboard():
 def history():        
     if "medstaff" in session:
         mdstf = session["medstaff"]
-        graph = createhistory()
+        userid = session["userid"]
+        graph = createindhistory(userid)
         return render_template("history.html", graph = graph, medstaff = str(mdstf))
     else:
         return redirect(url_for("login"))

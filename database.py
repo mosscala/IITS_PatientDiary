@@ -5,7 +5,7 @@ from plotly.offline import plot
 def printall():
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
-    c.execute("SELECT rowid, * FROM users")
+    c.execute("SELECT rowid, * FROM indwb")
     #return list(sum(c.fetchall(), ()))
     return c.fetchall()
 
@@ -58,6 +58,18 @@ def newentry(wbscore, symptom):
     conn.commit()
     conn.close()
 
+def newentrypatient(wbscore, symptom, uid):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    
+    print(wbscore)
+    print(symptom)
+    print(uid)
+    c.execute("INSERT INTO indwb VALUES (?,?,datetime('now', 'localtime'), ?)", (wbscore, symptom, uid))
+
+    conn.commit()
+    conn.close()
+
 def newuser(email, password, remember, medstaff):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
@@ -77,29 +89,23 @@ def newappointment(what, when, where, recurring, videolink, additinfo):
     conn.commit()
     conn.close()
 
-def fetchtime():
+def fetchhistory(uid):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
-    c.execute("SELECT time FROM howareyou")
-    return list(sum(c.fetchall(), ()))
+    c.execute("SELECT * FROM indwb WHERE userid LIKE ?", (uid,))
+    return c.fetchall()
 
-def fetchwbscore():
-    conn = sqlite3.connect('patientdiary.db')
-    c = conn.cursor()
-    c.execute("SELECT wellbeing FROM howareyou")
-    return list(sum(c.fetchall(), ()))
-
-def fetchsymptoms():
-    conn = sqlite3.connect('patientdiary.db')
-    c = conn.cursor()
-    c.execute("SELECT symptoms FROM howareyou")
-    return list(sum(c.fetchall(), ()))
-
-def createhistory():
-    time = fetchtime()
-    wbscore = fetchwbscore()
-    symptoms = fetchsymptoms()
-
+def createindhistory(uid):
+    
+    time = []
+    wbscore = []
+    symptoms = []
+    
+    for i in fetchhistory(uid):
+        time.append(i[2])
+        wbscore.append(i[0])
+        symptoms.append(i[1])
+    
     fig = go.Figure()
 
     # Create and style traces
@@ -110,6 +116,8 @@ def createhistory():
                     xaxis_title='Time',
                     yaxis_title='Wellbeing Score',
                 )
+
+    #fig.show()            
     return plot(fig, include_plotlyjs=False, output_type='div')
 
 def createappointmenttable():
@@ -156,11 +164,6 @@ c = conn.cursor()
 
 #print(c.fetchall())
 
-#Committing command
-#conn.commit()
-
-#Closing connection
-#conn.close()
 
 #Creating a Table
 #c.execute("""CREATE TABLE howareyou (
@@ -169,6 +172,20 @@ c = conn.cursor()
 #    time text
 #    )""")
 
+#Creating a Table
+# c.execute("""CREATE TABLE indwb (
+#    wellbeing integer,
+#    symptoms text,
+#    time text,
+#    userid int
+#    )""")
+
+#Committing command
+conn.commit()
+
+#Closing connection
+conn.close()
+
 #Deleting a table
 #c.execute("DROP TABLE users")
 
@@ -176,3 +193,6 @@ c = conn.cursor()
 print(printall())
 print(fetchrowid('a@b.de'))
 print(fetchmedstaff('a@b.de'))
+print(fetchhistory(11))
+
+createindhistory(11)
