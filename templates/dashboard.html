@@ -5,15 +5,20 @@
 {% set currentvar = 'dashboard' %}
 
 {% block content %}
+<div class="container mt-5">
 
-<h1>Normal {{medstaff}}</h1>
+    <div class="page-header">
+        <h1>Logged in as: </h1>
+    </div>
 
 {% if medstaff == '0' %}
-<h1>You are a patient</h1>
+<h1>patient</h1>
 {% endif %}
 
 {% if medstaff == '1' %}
-<h1>You are a medical staff</h1>
+<h1>medical staff</h1>
 {% endif %}
+
+</div>
 
 {% endblock %}

@@ -190,9 +190,9 @@ conn.close()
 #c.execute("DROP TABLE users")
 
 
-print(printall())
-print(fetchrowid('a@b.de'))
-print(fetchmedstaff('a@b.de'))
-print(fetchhistory(11))
+#print(printall())
+#print(fetchrowid('a@b.de'))
+#print(fetchmedstaff('a@b.de'))
+#print(fetchhistory(11))
 
-createindhistory(11)
+#createindhistory(11)

@@ -5,44 +5,9 @@ from database import *
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "djfsdjf"
 
-# @app.route("/howareyou",  methods=["POST", "GET"])
-# def howareyou():
-#     if "medstaff" in session:
-#         mdstf = session["medstaff"]
-#         graph = createappointmenttable()
-#         if request.method == "POST":
-#             new_symptom = request.form.get('symptoms')
-#             new_wellbeingscore = request.form.get('quantity')
-#             newentry(new_wellbeingscore, new_symptom)
-#             return redirect(url_for("howareyou", medstaff = str(mdstf)))
-#         else:
-#             return render_template("howareyou.html", medstaff = str(mdstf))
-#     else:
-#         return redirect(url_for("login"))
-
-@app.route("/howareyou",  methods=["POST", "GET"])
-def howareyou():
-    if "medstaff" in session:
-        mdstf = session["medstaff"]
-        graph = createappointmenttable()
-        if request.method == "POST":
-            new_symptom = request.form.get('symptoms')
-            new_wellbeingscore = request.form.get('quantity')
-            userid = session["userid"]
-            newentrypatient(new_wellbeingscore, new_symptom, userid)
-            return redirect(url_for("howareyou", medstaff = str(mdstf)))
-        else:
-            return render_template("howareyou.html", medstaff = str(mdstf))
-    else:
-        return redirect(url_for("login"))
-
-
 @app.route("/")
 def index():
-    # if not loggedin:
     return redirect(url_for("login"))
-    #else: redirect to dashboard
-        #return redirect("dashboard")
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
@@ -63,6 +28,12 @@ def login():
     else:
         return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    session.pop("userid", None)
+    session.pop("medstaff", None)
+    return redirect(url_for("login"))
+
 @app.route("/signup", methods=["POST", "GET"])
 def signup():
     if request.method == "POST":
@@ -81,6 +52,7 @@ def signup():
     else:
         return render_template("signup.html")
 
+#sign up for medical staff with additional authentication number
 @app.route("/medauth", methods=["POST", "GET"])
 def medauth():
 
@@ -104,17 +76,27 @@ def medauth():
     else:
         return render_template("medauth.html")
 
-@app.route("/logout")
-def logout():
-    session.pop("userid", None)
-    session.pop("medstaff", None)
-    return redirect(url_for("login"))
-
 @app.route("/dashboard")
 def dashboard():
     if "medstaff" in session:
         mdstf = session["medstaff"]
         return render_template("dashboard.html", medstaff = str(mdstf))
+    else:
+        return redirect(url_for("login"))
+
+@app.route("/howareyou",  methods=["POST", "GET"])
+def howareyou():
+    if "medstaff" in session:
+        mdstf = session["medstaff"]
+        graph = createappointmenttable()
+        if request.method == "POST":
+            new_symptom = request.form.get('symptoms')
+            new_wellbeingscore = request.form.get('quantity')
+            userid = session["userid"]
+            newentrypatient(new_wellbeingscore, new_symptom, userid)
+            return redirect(url_for("howareyou", medstaff = str(mdstf)))
+        else:
+            return render_template("howareyou.html", medstaff = str(mdstf))
     else:
         return redirect(url_for("login"))
 
