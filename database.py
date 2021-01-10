@@ -5,7 +5,7 @@ from plotly.offline import plot
 def printall():
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
-    c.execute("SELECT rowid, * FROM indwb")
+    c.execute("SELECT rowid, * FROM users")
     #return list(sum(c.fetchall(), ()))
     return c.fetchall()
 
@@ -61,11 +61,17 @@ def newentry(wbscore, symptom):
 def newentrypatient(wbscore, symptom, uid):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
-    
-    print(wbscore)
-    print(symptom)
-    print(uid)
+
     c.execute("INSERT INTO indwb VALUES (?,?,datetime('now', 'localtime'), ?)", (wbscore, symptom, uid))
+
+    conn.commit()
+    conn.close()
+
+def newentrymed(patid, medstaffid, medname, medbrand, admroute, dose, indic, morning, noon, evening, night, addinfo):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    
+    c.execute("INSERT INTO meds VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (patid, medstaffid, medname, medbrand, admroute, dose, indic, morning, noon, evening, night, addinfo))
 
     conn.commit()
     conn.close()
@@ -89,19 +95,59 @@ def newappointment(what, when, where, recurring, videolink, additinfo):
     conn.commit()
     conn.close()
 
+def fetchmeds(patid):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM meds WHERE patid LIKE ?", (patid,))
+    return c.fetchall()
+
 def fetchhistory(uid):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
     c.execute("SELECT * FROM indwb WHERE userid LIKE ?", (uid,))
     return c.fetchall()
 
-def createindhistory(uid):
+def createmedtable(uid):
+    
+    medstaffids = []
+    mednames = []
+    medbrands = []
+    admroutes  = []
+    doses = []
+    indics = []
+    mornings = []
+    noons = []
+    evenings = []
+    nights = []
+    addinfos = []
+    
+    for i in fetchmeds(uid):
+        medstaffids.append(i[1])
+        mednames.append(i[2])
+        medbrands.append(i[3])
+        admroutes.append(i[4])
+        doses.append(i[5])
+        indics.append(i[6])
+        mornings.append(i[7])
+        noons.append(i[8])
+        evenings.append(i[9])
+        nights.append(i[10])
+        addinfos.append(i[11])
+    
+    fig = go.Figure(data=[go.Table(header=dict(values=["Medication Name", "Brand", "Administer route", "Dose", "Indication", "Morning Dosage", "Noon Dosage", "Evening Dosage", "Night Dosage", "Additional Information", "Prescribed by"]),
+                 cells=dict(values=[mednames, medbrands, admroutes, doses, indics, mornings, noons, evenings, nights, addinfos, medstaffids]))
+                     ])
+       
+    #fig.show()            
+    return plot(fig, include_plotlyjs=False, output_type='div')
+
+def createindhistory(patid):
     
     time = []
     wbscore = []
     symptoms = []
     
-    for i in fetchhistory(uid):
+    for i in fetchhistory(patid):
         time.append(i[2])
         wbscore.append(i[0])
         symptoms.append(i[1])
@@ -112,8 +158,7 @@ def createindhistory(uid):
     fig.add_trace(go.Scatter(x=time, y=wbscore, name='Wellbeing Score', mode='lines+markers', hovertext=symptoms))
 
     # Edit the layout
-    fig.update_layout(title='Your Wellbeing',
-                    xaxis_title='Time',
+    fig.update_layout( xaxis_title='Time',
                     yaxis_title='Wellbeing Score',
                 )
 
@@ -149,6 +194,23 @@ c = conn.cursor()
 #    recurring integer
 #    )""")
 
+#Creating a Table
+# c.execute("""CREATE TABLE meds (
+#    patid integer,
+#    medstaffid integer,
+#    medname text,
+#    medbrand text,
+#    admroute text,
+#    dose text,
+#    indic text,
+#    morning real,
+#    noon real,
+#    evening real,
+#    night real,
+#    addinfo text
+#    )""")
+
+
 # c.execute("""CREATE TABLE users (
 #    email text,
 #    password text,
@@ -180,17 +242,17 @@ c = conn.cursor()
 #    userid int
 #    )""")
 
+
+#Deleting a table
+# c.execute("DROP TABLE meds")
+
 #Committing command
 conn.commit()
 
 #Closing connection
 conn.close()
 
-#Deleting a table
-#c.execute("DROP TABLE users")
-
-
-#print(printall())
+print(printall())
 #print(fetchrowid('a@b.de'))
 #print(fetchmedstaff('a@b.de'))
 #print(fetchhistory(11))
