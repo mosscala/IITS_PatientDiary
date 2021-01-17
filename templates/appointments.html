@@ -28,35 +28,28 @@
 
 {% endif %}
 
+{% if medstaff == '1' and showtable == '1' %}
+<div class="container mt-5">
+
+    <div class="page-header">
+        <h1>Upcoming appointments</h1>
+    </div>
+    
+</div>
+
+<div class="jumbotron bg-white">{{ table|safe }}</div>
+
+{% endif %}
+
 {% if medstaff == '1' %}
 <div class="container mt-5">
-    <!-- <h1>Add a new appointment here</h1>
-    <input type="button" value="Load from EMR"><br><br>
-    <label for="smptms">Type in Patient ID:</label><br>
-    <input type="integer" id="quantity" name="id" required><br>
-    <label for="smptms">Type in Patient Name:</label><br>
-    <input type="text" id="smptms" required><br>
-    <label for="smptms">Appointment Time</label><br> 
-    <input type="datetime" id="quantity" name="time" required><br>
-    <label for="smptms">Procedure</label><br>
-    <input type="text" id="quantity" name="what" required><br>
-    <label for="smptms">Location</label><br>
-    <input type="text" id="quantity" name="where" required><br>
-    <label for="smptms">Additional Information</label><br>
-    <input type="text" id="quantity" name="add_info"><br>
-    <label for="smptms">Recurring?</label><br>
-    <input type="checkbox" id="quantity" name="recurring"><br>
-    <input type="submit"> -->
-
     <form class="form-signin" method="POST" action="/appointments">
         <h1>Add a new appointment here</h1>
         <input type="button" value="Load from EMR"><br><br>
         <label for="who">Type in Patient ID:</label><br>
         <input type="number" id="who" name="id" required><br>
-        <label for="name">Type in Patient Name:</label><br>
-        <input type="text" id="name" name="name"><br>
         <label for="when">Appointment Time</label><br>
-        <input type="datetime-local" id="when" name="time" required><br>
+        <input type="date" id="when" name="time" required><br>
         <label for="what">Procedure</label><br>
         <input type="text" id="what" name="what"><br>
         <label for="where">Location</label><br>

@@ -13,7 +13,7 @@
 <form class="form-signin" method="POST" action="/medauth">
   <p>  
   <label for="email"><b>Email</b></label><br>
-    <input type="text" placeholder="Enter Email" name="email" required>
+    <input type="email" placeholder="Enter Email" name="email" required>
   </p>
 
   <p>
@@ -24,6 +24,26 @@
   <p>
     <label for="psw-repeat"><b>Repeat Password</b></label><br>
     <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
+  </p>
+
+  <p>
+    <label for="firstname"><b>First Name</b></label><br>
+    <input type="text" placeholder="Enter First Name" name="firstname" required>
+  </p>
+
+  <p>
+    <label for="lastname"><b>Last Name</b></label><br>
+    <input type="text" placeholder="Enter Last Name" name="lastname" required>
+  </p>
+
+  <p>
+    <label for="title"><b>Title/Function</b></label><br>
+    <input type="radio" id="MD" name="title" value="MD">
+    <label for="MD">MD</label><br>
+    <input type="radio" id="Nurse" name="title" value="Nurse">
+    <label for="Nurse">Nurse</label><br>
+    <input type="radio" id="Therapist" name="title" value="Therapist">
+    <label for="Therapist">Therapist</label>
   </p>
 
   <p>

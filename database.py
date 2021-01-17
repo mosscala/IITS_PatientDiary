@@ -1,8 +1,6 @@
 import sqlite3
 import plotly.graph_objects as go
 from plotly.offline import plot
-from prettytable import from_db_cursor
-
    
 def printall():
     conn = sqlite3.connect('patientdiary.db')
@@ -18,6 +16,18 @@ def fetchemail(inputemail):
     
     try:
             return ''.join(c.fetchone())
+    except:
+        return False
+
+def fetchfullname(rowid):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    c.execute("SELECT title, firstname, lastname FROM users WHERE rowid = ? ", (rowid,))
+    
+    try:
+        fullname = c.fetchall()
+        fullname = ' '.join(fullname[0])
+        return fullname
     except:
         return False
 
@@ -78,11 +88,11 @@ def newentrymed(patid, medstaffid, medname, medbrand, admroute, dose, indic, mor
     conn.commit()
     conn.close()
 
-def newuser(email, password, remember, medstaff):
+def newuser(email, password, remember, medstaff, title, firstname, lastname):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
     
-    c.execute("INSERT INTO users VALUES (?,?,?,?,?)", (None,email, password, remember, medstaff))
+    c.execute("INSERT INTO users VALUES (?,?,?,?,?,?,?,?)", (None, email, title, firstname, lastname, password, remember, medstaff))
 
     conn.commit()
     conn.close()
@@ -115,14 +125,14 @@ def fetchappoinment(who):
     c.execute("SELECT * FROM appointments WHERE who LIKE ?", (who,))
     return c.fetchall()
 
-def getappointmnets(uid):
+def fetchappointments(uid):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
     c.execute("SELECT * FROM appointments WHERE who LIKE ?", (uid,))
     return c.fetchall()
 
 
-def createplotlytable(uid):
+def createappointmenttable(uid):
 
     apptime = []
     loc = []
@@ -130,18 +140,21 @@ def createplotlytable(uid):
     videolink = []
     additinfo = []
     recurring = []
+    medstaffids = []
 
-    for i in getappointmnets(uid):
+    for i in fetchappointments(uid):
         apptime.append(i[1])
         loc.append(i[2])
         what.append(i[3])
-        videolink.append(i[4])
+        #videolink.append(i[4])
+        videolink.append('<a href=' + "'" + str(i[4]) + "'" + '>Video Link</a>')
         additinfo.append(i[5])
         recurring.append(i[6])
+        medstaffids.append(fetchfullname(i[8]))
 
         
-    fig = go.Figure(data=[go.Table(header=dict(values=["Appointment Time", "Venue", "Name of Procedure", "Link to Video", "Addtional Info", "Is this Recurring?"]),
-                 cells=dict(values=[apptime, loc, what, videolink, additinfo, recurring]))
+    fig = go.Figure(data=[go.Table(header=dict(values=["Appointment Time", "Venue", "Name of Procedure", "Link to Video", "Addtional Info", "Is this Recurring?", "Prescribed by"]),
+                 cells=dict(values=[apptime, loc, what, videolink, additinfo, recurring, medstaffids]))
                      ])
 
     #fig.show()            
@@ -168,7 +181,7 @@ def createmedtable(uid):
     addinfos = []
     
     for i in fetchmeds(uid):
-        medstaffids.append(i[1])
+        medstaffids.append(fetchfullname(i[1]))
         mednames.append(i[2])
         medbrands.append(i[3])
         admroutes.append(i[4])
@@ -207,17 +220,18 @@ def createindhistory(patid):
     fig.update_layout( xaxis_title='Time',
                     yaxis_title='Wellbeing Score',
                 )
+    fig.update_layout({"yaxis"+str(i+1): dict(range = [0, 10]) for i in range(4)})
 
     #fig.show()            
     return plot(fig, include_plotlyjs=False, output_type='div')
 
-def createappointmenttable():
-    fig = go.Figure(data=[go.Table(header=dict(values=['Procedure', 'Location', 'Appointment Time', 'Video', 'Additional Information', 'Recurring']),
-                 cells=dict(values=[['Colonoscopy'], ['Department F'], ['2020-12-28 09:56:34'], ['<a href=\'https://www.youtube.com/watch?v=wK2imf6w8Pw\'> Colonoscopy Video</a>'], ['Please make sure to drink the laxatives the evening before! Also no dinner tonight!'], ['No']]))
-                     ])
-    fig.update_layout(title='Your Appointments')
+# def createappointmenttable():
+#     fig = go.Figure(data=[go.Table(header=dict(values=['Procedure', 'Location', 'Appointment Time', 'Video', 'Additional Information', 'Recurring']),
+#                cells=dict(values=[['Colonoscopy'], ['Department F'], ['2020-12-28 09:56:34'], ['<a href=\'https://www.youtube.com/watch?v=wK2imf6w8Pw\'> Colonoscopy Video</a>'], ['Please make sure to drink the laxatives the evening before! Also no dinner tonight!'], ['No']]))
+#                      ])
+#     fig.update_layout(title='Your Appointments')
                 
-    return plot(fig, include_plotlyjs=False, output_type='div')
+#     return plot(fig, include_plotlyjs=False, output_type='div')
 
 
 
@@ -237,6 +251,9 @@ c = conn.cursor()
 # c.execute("""CREATE TABLE users (
 #    patient_id integer PRIMARY KEY,
 #    email text NOT NULL,
+#    title text,
+#    firstname text NOT NULL,
+#    lastname text NOT NULL,
 #    password text NOT NULL,
 #    remember integer NOT NULL,
 #    medstaff integer NOT NULL
@@ -304,7 +321,19 @@ c = conn.cursor()
 
 
 #Deleting a table
-# c.execute("DROP TABLE meds")
+# c.execute("DROP TABLE users")
+
+# #Create Users
+# c.execute("""CREATE TABLE users (
+#    patient_id integer PRIMARY KEY,
+#    email text NOT NULL,
+#    title text,
+#    firstname text NOT NULL,
+#    lastname text NOT NULL,
+#    password text NOT NULL,
+#    remember integer NOT NULL,
+#    medstaff integer NOT NULL
+#    )""")
 
 #Committing command
 conn.commit()
@@ -317,4 +346,6 @@ print(printall())
 #print(fetchmedstaff('a@b.de'))
 #print(fetchhistory(11))
 
+
 #createindhistory(11)
+print(fetchfullname(1))

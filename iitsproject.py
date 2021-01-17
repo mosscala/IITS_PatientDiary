@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request, session
 import sqlite3
-from database import fetchhistory, fetchemail, fetchmedstaff, fetchpassword, fetchrowid, createappointmenttable, createindhistory, createmedtable, newentrypatient, newuser, newentrymed, createplotlytable, newappointment
+from database import fetchhistory, fetchemail, fetchmedstaff, fetchpassword, fetchrowid, createappointmenttable, createindhistory, createmedtable, newentrypatient, newuser, newentrymed, newappointment
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "djfsdjf"
@@ -40,12 +40,15 @@ def signup():
         email = request.form.get('email')
         password = request.form.get('psw')
         passwordrpt = request.form.get('psw-repeat')
+        title = 0
+        firstname = request.form.get('firstname')
+        lastname = request.form.get('lastname')
         medstaff = 0
         remember = 1 if request.form.get('remember') == 'on' else 0
         if password != passwordrpt:
             return render_template("signup.html", msg = '2')
         if not fetchemail(email):
-            newuser(email, password, remember, medstaff)
+            newuser(email, password, remember, medstaff, title, firstname, lastname)
             return render_template("signup.html", msg = '3')
         elif fetchemail(email):
             return render_template("signup.html", msg = '1')
@@ -63,6 +66,9 @@ def medauth():
         email = request.form.get('email')
         password = request.form.get('psw')
         passwordrpt = request.form.get('psw-repeat')
+        title = request.form.get('title')
+        firstname = request.form.get('firstname')
+        lastname = request.form.get('lastname')
         authnum = request.form.get('authnum')
         medstaff = 1
         remember = 1 if request.form.get('remember') == 'on' else 0
@@ -71,7 +77,7 @@ def medauth():
         if password != passwordrpt:
             return render_template("medauth.html", msg = '2')
         if not fetchemail(email):
-            newuser(email, password, remember, medstaff)
+            newuser(email, password, remember, medstaff, title, firstname, lastname)
             return render_template("medauth.html", msg = '4')
         elif fetchemail(email):
             return render_template("medauth.html", msg = '1')
@@ -124,23 +130,11 @@ def history():
     else:
         return redirect(url_for("login"))
 
-# @app.route("/appointments")
-# def appointments():
-#         if "medstaff" in session:
-#             mdstf = session["medstaff"]
-#             # if mdstf = 1:
-#             #     return render_template("create_appointement.html")
-#             graph = createappointmenttable()
-#             return render_template("appointments.html", graph = graph, medstaff = str(mdstf))
-#         else:
-#             return redirect(url_for("login"))
-
 @app.route("/appointments", methods=["POST", "GET"])
 def appointments():
     if "medstaff" in session:
         mdstf = session["medstaff"]
         u_id = session["userid"]
-        table = createplotlytable(uid=u_id)
         #appointments_info = fetchappoinment(user_id)
         if request.method == "POST":
             doc_id = session["userid"]
@@ -152,8 +146,9 @@ def appointments():
             link = request.form.get('link')
             recurring = request.form.get('recurring')
             newappointment(who=who, what=what, apptime=apptime, loc=loc, recurring=recurring, additinfo=add_info, videolink=link, doc_id=doc_id)
-            return render_template("appointments.html", medstaff = str(mdstf), table = table)
+            return render_template("appointments.html", medstaff = str(mdstf), table = createappointmenttable(uid=who), showtable = '1')
         else:
+            table = createappointmenttable(uid=u_id)
             return render_template("appointments.html", medstaff = str(mdstf), table = table)
             #return render_template(url_for(display_appointments))
     else:
