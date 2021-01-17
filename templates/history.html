@@ -6,6 +6,7 @@
 
 {% block content %}
 
+{% if medstaff == '0' %}
 <div class="container mt-5">
 
 <div class="page-header">
@@ -15,5 +16,30 @@
 </div>
 
 <div class="jumbotron bg-white">{{ graph|safe }}</div>
+{% endif %}
+
+{% if medstaff == '1' and showgraph == '1' %}
+<div class="container mt-5">
+
+    <div class="page-header">
+        <h1>History</h1>
+    </div>
+    <div class="container">{{ graph|safe }}</div>
+</div>
+{% endif %}
+
+{% if medstaff == '1' %}
+<div class="container mt-5">
+
+    <form method="POST" action="/history">
+        <p>
+            <label for="smptms">Type in Patient ID:</label><br>
+            <input type="text" name="patid" required><br>
+        </p>
+        <input type="submit" value="Show Graph" class="btn btn-secondary">
+    </form>
+
+</div>
+{% endif %}
 
 {% endblock %}
