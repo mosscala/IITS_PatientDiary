@@ -1,7 +1,9 @@
 import sqlite3
 import plotly.graph_objects as go
 from plotly.offline import plot
+from prettytable import from_db_cursor
 
+   
 def printall():
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
@@ -74,17 +76,17 @@ def newuser(email, password, remember, medstaff):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
     
-    c.execute("INSERT INTO users VALUES (?,?,?,?)", (email, password, remember, medstaff))
+    c.execute("INSERT INTO users VALUES (?,?,?,?,?)", (None,email, password, remember, medstaff))
 
     conn.commit()
     conn.close()
 
 
-def newappointment(what, when, where, recurring, videolink, additinfo):
+def newappointment(who, what, apptime, loc, recurring, videolink, additinfo, doc_id):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
     
-    c.execute("INSERT INTO appointments VALUES (?,?,?,?,?,?)", (when, where, what, videolink, additinfo, recurring))
+    c.execute("INSERT INTO appointments VALUES (?,?,?,?,?,?,?,?,?)", (None, apptime, loc, what, videolink, additinfo, recurring, who, doc_id))
 
     conn.commit()
     conn.close()
@@ -94,6 +96,48 @@ def fetchhistory(uid):
     c = conn.cursor()
     c.execute("SELECT * FROM indwb WHERE userid LIKE ?", (uid,))
     return c.fetchall()
+
+def fetchappoinment(who):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM appointments WHERE who LIKE ?", (who,))
+    return c.fetchall()
+
+def getappointmnets(uid):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM appointments WHERE who LIKE ?", (uid,))
+    return c.fetchall()
+
+
+def createplotlytable(uid):
+
+    apptime = []
+    loc = []
+    what =[]
+    videolink = []
+    additinfo = []
+    recurring = []
+
+    for i in getappointmnets(uid):
+        apptime.append(i[1])
+        loc.append(i[2])
+        what.append(i[3])
+        videolink.append(i[4])
+        additinfo.append(i[5])
+        recurring.append(i[6])
+
+        
+    fig = go.Figure(data=[go.Table(header=dict(values=["Appointment Time", "Venue", "Name of Procedure", "Link to Video", "Addtional Info", "Is this Recurring?"]),
+                 cells=dict(values=[apptime, loc, what, videolink, additinfo, recurring]))
+                     ])
+
+    #fig.show()            
+    return plot(fig, include_plotlyjs=False, output_type='div')
+
+    # table = from_db_cursor(c)
+    # return table
+
 
 def createindhistory(uid):
     
@@ -128,9 +172,12 @@ def createappointmenttable():
                 
     return plot(fig, include_plotlyjs=False, output_type='div')
 
+
+
 #dat = fetchsymptoms()
 
 #print(dat)
+
 
 
 #Connecting to database
@@ -139,22 +186,31 @@ conn = sqlite3.connect('patientdiary.db')
 #Creating the cursor
 c = conn.cursor()
 
-#Creating a Table
-# c.execute("""CREATE TABLE appointments (
-#    aptime text,
-#    loc text,
-#    proc text,
-#    video text,
-#    additional text,
-#    recurring integer
+# #Create Users
+# c.execute("""CREATE TABLE users (
+#    patient_id integer PRIMARY KEY,
+#    email text NOT NULL,
+#    password text NOT NULL,
+#    remember integer NOT NULL,
+#    medstaff integer NOT NULL
 #    )""")
 
-# c.execute("""CREATE TABLE users (
-#    email text,
-#    password text,
-#    remember integer,
-#    medstaff integer
+# #Create appointment 
+# c.execute("""CREATE TABLE appointments (
+#    pid integer PRIMARY KEY,
+#    apptime text NOT NULL,
+#    loc text NOT NULL,
+#    what text NOT NULL,
+#    videolink text NOT NULL,
+#    additinfo text NOT NULL,
+#    recurring integer,
+#    who integer,
+#    doc_id integer,
+#    FOREIGN KEY (who) REFERENCES users (patient_id),
+#    FOREIGN KEY (doc_id) REFERENCES users (patient_id)
 #    )""")
+
+
 
 #Creating a new entry
 #c.execute("INSERT INTO howareyou VALUES ('2', 'fever', datetime('now', 'localtime'))")
@@ -165,14 +221,14 @@ c = conn.cursor()
 #print(c.fetchall())
 
 
-#Creating a Table
-#c.execute("""CREATE TABLE howareyou (
+# #Creating a Table
+# c.execute("""CREATE TABLE howareyou (
 #    wellbeing integer,
 #    symptoms text,
 #    time text
 #    )""")
 
-#Creating a Table
+# #Creating a Table
 # c.execute("""CREATE TABLE indwb (
 #    wellbeing integer,
 #    symptoms text,

@@ -52,6 +52,8 @@ def signup():
     else:
         return render_template("signup.html")
 
+
+    
 #sign up for medical staff with additional authentication number
 @app.route("/medauth", methods=["POST", "GET"])
 def medauth():
@@ -110,14 +112,40 @@ def history():
     else:
         return redirect(url_for("login"))
 
-@app.route("/appointments")
+# @app.route("/appointments")
+# def appointments():
+#         if "medstaff" in session:
+#             mdstf = session["medstaff"]
+#             # if mdstf = 1:
+#             #     return render_template("create_appointement.html")
+#             graph = createappointmenttable()
+#             return render_template("appointments.html", graph = graph, medstaff = str(mdstf))
+#         else:
+#             return redirect(url_for("login"))
+
+@app.route("/appointments", methods=["POST", "GET"])
 def appointments():
-        if "medstaff" in session:
-            mdstf = session["medstaff"]
-            graph = createappointmenttable()
-            return render_template("appointments.html", graph = graph, medstaff = str(mdstf))
+    if "medstaff" in session:
+        mdstf = session["medstaff"]
+        u_id = session["userid"]
+        table = createplotlytable(uid=u_id)
+        #appointments_info = fetchappoinment(user_id)
+        if request.method == "POST":
+            doc_id = session["userid"]
+            who = request.form.get('id')
+            apptime = request.form.get('time')
+            what = request.form.get('what')
+            loc = request.form.get('where')
+            add_info = request.form.get('add_info')
+            link = request.form.get('link')
+            recurring = request.form.get('recurring')
+            newappointment(who=who, what=what, apptime=apptime, loc=loc, recurring=recurring, additinfo=add_info, videolink=link, doc_id=doc_id)
+            return render_template("appointments.html", medstaff = str(mdstf), table = table)
         else:
-            return redirect(url_for("login"))
+            return render_template("appointments.html", medstaff = str(mdstf), table = table)
+            #return render_template(url_for(display_appointments))
+    else:
+         return redirect(url_for("login")) 
 
 @app.route("/medication")
 def medication():
