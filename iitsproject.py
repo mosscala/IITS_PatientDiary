@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request, session
 import sqlite3
-from database import fetchhistory, fetchemail, fetchmedstaff, fetchpassword, fetchrowid, createappointmenttable, createindhistory, createmedtable, newentrypatient, newuser, newentrymed
+from database import fetchhistory, fetchemail, fetchmedstaff, fetchpassword, fetchrowid, createappointmenttable, createindhistory, createmedtable, newentrypatient, newuser, newentrymed, createplotlytable, newappointment
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "djfsdjf"

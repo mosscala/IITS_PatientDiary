@@ -151,7 +151,8 @@ def createplotlytable(uid):
     # return table
 
 
-def createindhistory(uid):
+
+    
 def createmedtable(uid):
     
     medstaffids = []
@@ -241,6 +242,7 @@ c = conn.cursor()
 #    medstaff integer NOT NULL
 #    )""")
 
+
 # #Create appointment 
 # c.execute("""CREATE TABLE appointments (
 #    pid integer PRIMARY KEY,
@@ -254,7 +256,10 @@ c = conn.cursor()
 #    doc_id integer,
 #    FOREIGN KEY (who) REFERENCES users (patient_id),
 #    FOREIGN KEY (doc_id) REFERENCES users (patient_id)
+#    )""")
+
 #Creating a Table
+
 # c.execute("""CREATE TABLE meds (
 #    patid integer,
 #    medstaffid integer,
@@ -270,13 +275,6 @@ c = conn.cursor()
 #    addinfo text
 #    )""")
 
-
-# c.execute("""CREATE TABLE users (
-#    email text,
-#    password text,
-#    remember integer,
-#    medstaff integer
-#    )""")
 
 
 
