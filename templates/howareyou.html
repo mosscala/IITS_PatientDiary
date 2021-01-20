@@ -29,6 +29,27 @@
 
 {% if medstaff == '1' %}
 
+<!-- <div class="container mt-5">
+
+    <div class="page-header">
+        <h1>How is the patient feeling?</h1>
+    </div>
+
+<form action="/howareyou" METHOD="POST"> 
+    <p>
+    <textarea placeholder="Type in symptoms" name="symptoms"></textarea><br>
+    </p>
+    <p></p><label for="quantity">Overall Wellbeing (between 1 and 10):</label><br>
+    <input type="range" id="quantity" name="quantity" min="1" max="10" value="5" step="1"><br>
+    </p>
+    <p><label for="smptms">Type in Patient ID:</label><br>
+    <input type="text" name="patid" required><br>
+    </p>
+    <input type="submit" value="Save Entry" class="btn btn-secondary">
+
+</form>
+</div> -->
+
 
 <div class="container mt-5">
 
@@ -46,7 +67,31 @@
     <p><label for="smptms">Type in Patient ID:</label><br>
     <input type="text" name="patid" required><br>
     </p>
-    <input type="submit" value="Save Entry" class="btn btn-secondary">
+    <input type="hidden" name="btn_identifier" value="saveentrybutton" />
+    <input type="submit" value="Save Entry">
+
+</form>
+</div>
+
+
+<div class="container mt-5">
+
+    <div class="page-header">
+        <h1>Second form</h1>
+    </div>
+
+<form action="/howareyou" METHOD="POST"> 
+    <p>
+    <textarea placeholder="Type in symptoms" name="symptoms"></textarea><br>
+    </p>
+    <p><label for="patid">Type in Entry ID:</label><br>
+        <input type="text" name="entryid" ><br>
+    </p>
+    <p><label for="patid">Type in Patient ID:</label><br>
+    <input type="text" name="patid2" ><br>
+    </p>
+    <input type="hidden" name="btn_identifier" value="deletebutton" />
+    <input type="submit" value="Delete">
 
 </form>
 </div>

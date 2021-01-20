@@ -7,6 +7,25 @@
 {% block content %}
 
 {% if medstaff == '0' %}
+
+<div class="container mt-5">
+
+    <div class="page-header">
+        <h1>How are you feeling?</h1>
+    </div>
+
+<form action="/history" METHOD="POST"> 
+    <p>
+    <textarea id="smptms" placeholder="Type in symptoms" name="symptoms"></textarea><br>
+    </p>
+    <p><label for="quantity">Overall Wellbeing (between 1 and 10):</label><br>
+    <input type="range" id="quantity" name="quantity" min="1" max="10" value="5" step="1"><br>
+    </p>
+    <input type="hidden" name="btn_identifier" value="newentrybutton" />
+    <input type="submit" value="Save Entry">
+</form>
+</div>
+
 <div class="container mt-5">
 
 <div class="page-header">
@@ -16,27 +35,70 @@
 </div>
 
 <div class="jumbotron bg-white">{{ graph|safe }}</div>
-{% endif %}
 
-{% if medstaff == '1' and showgraph == '1' %}
-<div class="container mt-5">
+<div class="jumbotron bg-white">{{ table|safe }}</div>
 
-    <div class="page-header">
-        <h1>History</h1>
-    </div>
-    <div class="container">{{ graph|safe }}</div>
-</div>
 {% endif %}
 
 {% if medstaff == '1' %}
+
+<div class="container mt-5">
+
+    <div class="page-header">
+        <h1>How is the patient feeling?</h1>
+    </div>
+
+<form action="/history" METHOD="POST"> 
+    <p>
+    <textarea placeholder="Type in symptoms" name="symptoms" ></textarea><br>
+    </p>
+    <p></p><label for="quantity">Overall Wellbeing (between 1 and 10):</label><br>
+    <input type="range" class ="form-control-range" id="quantity" name="quantity" min="1" max="10" value="5" step="1"><br>
+    </p>
+    <input type="hidden" name="btn_identifier" value="newentrybutton" />
+    <input type="submit" value="Save Entry">
+
+</form>
+</div>
+
+<!-- <div class="container mt-5">
+
+    <form method="POST" action="/history">
+        <p>
+            <label for="patid">Type in Patient ID:</label><br>
+            <input type="text" name="patid" ><br>
+        </p>
+        <input type="hidden" name="btn_identifier" value="showbutton" />
+        <input type="submit" value="Show Graph and Table" class="btn btn-secondary">
+    </form> -->
+
+<!-- </div> -->
+
+<div class="container mt-5">
+
+    <div class="page-header">
+        <h1>History Graph</h1>
+    </div>
+    <div class="container">{{ graph|safe }}</div>
+</div>
+
+<div class="container mt-5">
+
+    <div class="page-header">
+        <h1>History Table</h1>
+    </div>
+    <div class="container">{{ table|safe }}</div>
+</div>
+
 <div class="container mt-5">
 
     <form method="POST" action="/history">
         <p>
-            <label for="smptms">Type in Patient ID:</label><br>
-            <input type="text" name="patid" required><br>
+            <label for="delete">Deletion of Entry:</label><br>
+            <input type="text" name="entryid" placeholder="Type in Entry ID"><br>
         </p>
-        <input type="submit" value="Show Graph" class="btn btn-secondary">
+        <input type="hidden" name="btn_identifier" value="deletebutton" />
+        <input type="submit" value="Delete Entry" class="btn btn-secondary">
     </form>
 
 </div>

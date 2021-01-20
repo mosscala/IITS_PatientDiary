@@ -16,30 +16,16 @@
 </div>
 {% endif %}
 
-{% if medstaff == '1' and showtable == '1' %}
-<div class="container mt-5">
-
-    <div class="page-header">
-        <h1>Current medication</h1>
-    </div>
-    <div class="container">{{ table|safe }}</div>
-</div>
-{% endif %}
-
 {% if medstaff == '1' %}
+
 <div class="container mt-5">
 
     <div class="page-header">
-        <h1>Add a new pharmaceutical here:</h1>
+        <h1>Add new medication</h1>
     </div>
 
 <form method="POST" action="/medication">
-    <!-- <input type="button" value="Load from EMR"><br><br> -->
-    <p>
-    <label>Patient ID</label><br>
-    <input type="text" name="patid" required><br>
-    </p>
-    
+   
     <p>
     <label>Name of medication</label><br>
     <input type="text" name="medname" required><br>
@@ -68,15 +54,12 @@
     <label>Morning</label><br>
     <input type="number" id="quantity" name="morning" min="0" step="0.25" required><br>
     </p>
-
-    <!-- <label>Forenoon</label><br>
-    <input type="number" id="quantity" name="quantity" min="0" step="0.25"><br> -->
+    
     <p>
     <label>Noon</label><br>
     <input type="number" id="quantity" name="noon" min="0" step="0.25" required><br>
     </p>
-    <!-- <label>Afternoon</label><br>
-    <input type="number" id="quantity" name="quantity" min="0" step="0.25"><br> -->
+    
     <p><label>Evening</label><br>
     <input type="number" id="quantity" name="evening" min="0" step="0.25" required><br>
     </p>
@@ -91,10 +74,34 @@
     <input type="text" name="addinfo"><br>
     </p>
 
-    <input type="submit" class="btn btn-primary btn-lg" name="btn" value="Submit">
+    <input type="hidden" name="btn_identifier" value="newentrybutton" />
+        <input type="submit" value="Submit Entry" class="btn btn-secondary">
     <!-- <input type="submit" name="btn" value="Show Table"> -->
 </form>
 </div>
+
+<div class="container mt-5">
+
+    <div class="page-header">
+        <h1>Current medication</h1>
+    </div>
+    <div class="container">{{ table|safe }}</div>
+</div>
+
+<div class="container mt-5">
+
+    <form method="POST" action="/medication">
+        <p>
+            <label for="entryid">Type in Medication ID:</label><br>
+            <input type="text" name="entryid" ><br>
+        </p>
+        <!-- <input type="submit" value="Show Graph and Table" class="btn btn-secondary"> -->
+        <input type="hidden" name="btn_identifier" value="deletebutton" />
+        <input type="submit" value="Delete Entry" class="btn btn-secondary">
+    </form>
+
+</div>
+
 {% endif %}
 
 {% endblock %}

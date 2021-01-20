@@ -97,12 +97,41 @@ def newuser(email, password, remember, medstaff, title, firstname, lastname):
     conn.commit()
     conn.close()
 
-
-def newappointment(who, what, apptime, loc, recurring, videolink, additinfo, doc_id):
+def newappointment(apptime, loc, procedure, link, addinfo, patid, medstaffid):
+    for i in (apptime, loc, procedure, link, addinfo, patid, medstaffid):
+        print(i)
+    
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
     
-    c.execute("INSERT INTO appointments VALUES (?,?,?,?,?,?,?,?,?)", (None, apptime, loc, what, videolink, additinfo, recurring, who, doc_id))
+    c.execute("INSERT INTO appointments VALUES (?,?,?,?,?,?,?,?)", (None, apptime, loc, procedure, link, addinfo, patid, medstaffid))
+
+    conn.commit()
+    conn.close()
+
+def deletewbentry(delid):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+
+    c.execute("DELETE FROM indwb WHERE rowid LIKE ?", (delid,))
+
+    conn.commit()
+    conn.close()
+
+def deletemedentry(delid):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+
+    c.execute("DELETE FROM meds WHERE rowid LIKE ?", (delid,))
+
+    conn.commit()
+    conn.close()
+
+def deleteappointmententry(delid):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+
+    c.execute("DELETE FROM appointments WHERE rowid LIKE ?", (delid,))
 
     conn.commit()
     conn.close()
@@ -110,25 +139,25 @@ def newappointment(who, what, apptime, loc, recurring, videolink, additinfo, doc
 def fetchmeds(patid):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM meds WHERE patid LIKE ?", (patid,))
+    c.execute("SELECT rowid, * FROM meds WHERE patid LIKE ?", (patid,))
     return c.fetchall()
 
 def fetchhistory(uid):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM indwb WHERE userid LIKE ?", (uid,))
-    return c.fetchall()
-
-def fetchappoinment(who):
-    conn = sqlite3.connect('patientdiary.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM appointments WHERE who LIKE ?", (who,))
+    c.execute("SELECT rowid, * FROM indwb WHERE userid LIKE ?", (uid,))
     return c.fetchall()
 
 def fetchappointments(uid):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM appointments WHERE who LIKE ?", (uid,))
+    c.execute("SELECT rowid, * FROM appointments WHERE who LIKE ?", (uid,))
+    return c.fetchall()
+
+def fetchpatients():
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    c.execute("SELECT rowid, * FROM users WHERE medstaff LIKE 0")
     return c.fetchall()
 
 
@@ -139,22 +168,20 @@ def createappointmenttable(uid):
     what =[]
     videolink = []
     additinfo = []
-    recurring = []
     medstaffids = []
 
     for i in fetchappointments(uid):
-        apptime.append(i[1])
-        loc.append(i[2])
-        what.append(i[3])
+        apptime.append(i[2])
+        loc.append(i[3])
+        what.append(i[4])
         #videolink.append(i[4])
-        videolink.append('<a href=' + "'" + str(i[4]) + "'" + '>Video Link</a>')
-        additinfo.append(i[5])
-        recurring.append(i[6])
+        videolink.append('<a href=' + "'" + str(i[5]) + "'" + '>Video Link</a>')
+        additinfo.append(i[6])
         medstaffids.append(fetchfullname(i[8]))
 
         
-    fig = go.Figure(data=[go.Table(header=dict(values=["Appointment Time", "Venue", "Name of Procedure", "Link to Video", "Addtional Info", "Is this Recurring?", "Prescribed by"]),
-                 cells=dict(values=[apptime, loc, what, videolink, additinfo, recurring, medstaffids]))
+    fig = go.Figure(data=[go.Table(header=dict(values=["Appointment Time", "Venue", "Name of Procedure", "Link to Video", "Addtional Info", "Prescribed by"]),
+                 cells=dict(values=[apptime, loc, what, videolink, additinfo, medstaffids]))
                      ])
 
     #fig.show()            
@@ -163,8 +190,36 @@ def createappointmenttable(uid):
     # table = from_db_cursor(c)
     # return table
 
+def createappointmenttablestaff(uid):
 
+    rowids = []
+    apptime = []
+    loc = []
+    what =[]
+    videolink = []
+    additinfo = []
+    medstaffids = []
 
+    for i in fetchappointments(uid):
+        rowids.append(i[0])
+        apptime.append(i[2])
+        loc.append(i[3])
+        what.append(i[4])
+        #videolink.append(i[4])
+        videolink.append('<a href=' + "'" + str(i[5]) + "'" + '>Video Link</a>')
+        additinfo.append(i[6])
+        medstaffids.append(fetchfullname(i[8]))
+
+        
+    fig = go.Figure(data=[go.Table(header=dict(values=["Appointment ID", "Appointment Time", "Venue", "Name of Procedure", "Link to Video", "Addtional Info", "Prescribed by"]),
+                 cells=dict(values=[rowids, apptime, loc, what, videolink, additinfo, medstaffids]))
+                     ])
+
+    #fig.show()            
+    return plot(fig, include_plotlyjs=False, output_type='div')
+
+    # table = from_db_cursor(c)
+    # return table
     
 def createmedtable(uid):
     
@@ -181,20 +236,56 @@ def createmedtable(uid):
     addinfos = []
     
     for i in fetchmeds(uid):
-        medstaffids.append(fetchfullname(i[1]))
-        mednames.append(i[2])
-        medbrands.append(i[3])
-        admroutes.append(i[4])
-        doses.append(i[5])
-        indics.append(i[6])
-        mornings.append(i[7])
-        noons.append(i[8])
-        evenings.append(i[9])
-        nights.append(i[10])
-        addinfos.append(i[11])
+        medstaffids.append(fetchfullname(i[2]))
+        mednames.append(i[3])
+        medbrands.append(i[4])
+        admroutes.append(i[5])
+        doses.append(i[6])
+        indics.append(i[7])
+        mornings.append(i[8])
+        noons.append(i[9])
+        evenings.append(i[10])
+        nights.append(i[11])
+        addinfos.append(i[12])
     
     fig = go.Figure(data=[go.Table(header=dict(values=["Medication Name", "Brand", "Administer route", "Dose", "Indication", "Morning Dosage", "Noon Dosage", "Evening Dosage", "Night Dosage", "Additional Information", "Prescribed by"]),
                  cells=dict(values=[mednames, medbrands, admroutes, doses, indics, mornings, noons, evenings, nights, addinfos, medstaffids]))
+                     ])
+       
+    #fig.show()            
+    return plot(fig, include_plotlyjs=False, output_type='div')
+
+def createmedtablestaff(uid):
+    
+    rowids = []
+    medstaffids = []
+    mednames = []
+    medbrands = []
+    admroutes  = []
+    doses = []
+    indics = []
+    mornings = []
+    noons = []
+    evenings = []
+    nights = []
+    addinfos = []
+    
+    for i in fetchmeds(uid):
+        rowids.append(i[0])
+        medstaffids.append(fetchfullname(i[2]))
+        mednames.append(i[3])
+        medbrands.append(i[4])
+        admroutes.append(i[5])
+        doses.append(i[6])
+        indics.append(i[7])
+        mornings.append(i[8])
+        noons.append(i[9])
+        evenings.append(i[10])
+        nights.append(i[11])
+        addinfos.append(i[12])
+    
+    fig = go.Figure(data=[go.Table(header=dict(values=["Medication ID", "Medication Name", "Brand", "Administer route", "Dose", "Indication", "Morning Dosage", "Noon Dosage", "Evening Dosage", "Night Dosage", "Additional Information", "Prescribed by"]),
+                 cells=dict(values=[rowids, mednames, medbrands, admroutes, doses, indics, mornings, noons, evenings, nights, addinfos, medstaffids]))
                      ])
        
     #fig.show()            
@@ -207,9 +298,9 @@ def createindhistory(patid):
     symptoms = []
     
     for i in fetchhistory(patid):
-        time.append(i[2])
-        wbscore.append(i[0])
-        symptoms.append(i[1])
+        time.append(i[3])
+        wbscore.append(i[1])
+        symptoms.append(i[2])
     
     fig = go.Figure()
 
@@ -224,6 +315,65 @@ def createindhistory(patid):
 
     #fig.show()            
     return plot(fig, include_plotlyjs=False, output_type='div')
+
+def createindtable(patid):
+    
+    time = []
+    wbscore = []
+    symptoms = []
+    
+    for i in fetchhistory(patid):
+        time.append(i[3])
+        wbscore.append(i[1])
+        symptoms.append(i[2])
+    
+    fig = go.Figure(data=[go.Table(header=dict(values=["Entry Date", "Score", "Symptoms/Observations"]),
+                 cells=dict(values=[time, wbscore, symptoms]))
+                     ])
+       
+    #fig.show()            
+    return plot(fig, include_plotlyjs=False, output_type='div')
+
+def createindhistorystafftable(patid):
+    
+    rowid = []
+    time = []
+    wbscore = []
+    symptoms = []
+    
+    for i in fetchhistory(patid):
+        rowid.append(i[0])
+        time.append(i[3])
+        wbscore.append(i[1])
+        symptoms.append(i[2])
+    
+    fig = go.Figure(data=[go.Table(header=dict(values=["Entry ID", "Entry Date", "Score", "Symptoms/Observations"]),
+                 cells=dict(values=[rowid, time, wbscore, symptoms]))
+                     ])
+       
+    #fig.show()            
+    return plot(fig, include_plotlyjs=False, output_type='div')
+
+def createusertable():
+
+    rowids = []
+    firstnames = []
+    lastnames = []
+
+    for i in fetchpatients():
+        rowids.append(i[0])
+        firstnames.append(i[4])
+        lastnames.append(i[5])
+        
+    fig = go.Figure(data=[go.Table(header=dict(values=["Patient ID", "First Name", "Last Name"]),
+                 cells=dict(values=[rowids, firstnames, lastnames]))
+                     ])
+
+    #fig.show()            
+    return plot(fig, include_plotlyjs=False, output_type='div')
+
+    # table = from_db_cursor(c)
+    # return table
 
 # def createappointmenttable():
 #     fig = go.Figure(data=[go.Table(header=dict(values=['Procedure', 'Location', 'Appointment Time', 'Video', 'Additional Information', 'Recurring']),
@@ -247,7 +397,6 @@ conn = sqlite3.connect('patientdiary.db')
 #Creating the cursor
 c = conn.cursor()
 
-# #Create Users
 # c.execute("""CREATE TABLE users (
 #    patient_id integer PRIMARY KEY,
 #    email text NOT NULL,
@@ -258,24 +407,6 @@ c = conn.cursor()
 #    remember integer NOT NULL,
 #    medstaff integer NOT NULL
 #    )""")
-
-
-# #Create appointment 
-# c.execute("""CREATE TABLE appointments (
-#    pid integer PRIMARY KEY,
-#    apptime text NOT NULL,
-#    loc text NOT NULL,
-#    what text NOT NULL,
-#    videolink text NOT NULL,
-#    additinfo text NOT NULL,
-#    recurring integer,
-#    who integer,
-#    doc_id integer,
-#    FOREIGN KEY (who) REFERENCES users (patient_id),
-#    FOREIGN KEY (doc_id) REFERENCES users (patient_id)
-#    )""")
-
-#Creating a Table
 
 # c.execute("""CREATE TABLE meds (
 #    patid integer,
@@ -292,6 +423,25 @@ c = conn.cursor()
 #    addinfo text
 #    )""")
 
+# c.execute("""CREATE TABLE appointments (
+#    pid integer PRIMARY KEY,
+#    apptime text NOT NULL,
+#    loc text NOT NULL,
+#    what text NOT NULL,
+#    videolink text NOT NULL,
+#    additinfo text NOT NULL,
+#    who integer,
+#    doc_id integer,
+#    FOREIGN KEY (who) REFERENCES users (patient_id),
+#    FOREIGN KEY (doc_id) REFERENCES users (patient_id)
+#    )""")
+
+# c.execute("""CREATE TABLE indwb (
+#    wellbeing integer,
+#    symptoms text,
+#    time text,
+#    userid int
+#    )""")
 
 
 
@@ -302,14 +452,6 @@ c = conn.cursor()
 #c.execute("SELECT rowid, * FROM howareyou")
 
 #print(c.fetchall())
-
-
-# #Creating a Table
-# c.execute("""CREATE TABLE howareyou (
-#    wellbeing integer,
-#    symptoms text,
-#    time text
-#    )""")
 
 # #Creating a Table
 # c.execute("""CREATE TABLE indwb (
@@ -349,3 +491,4 @@ print(printall())
 
 #createindhistory(11)
 print(fetchfullname(1))
+createusertable()

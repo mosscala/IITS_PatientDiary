@@ -10,15 +10,30 @@
     <div class="page-header">
         <h1>Logged in as: </h1>
     </div>
-
+   
 {% if medstaff == '0' %}
 <h1>patient</h1>
 {% endif %}
 
 {% if medstaff == '1' %}
 <h1>medical staff</h1>
+<div class="jumbotron bg-white">{{ table|safe }}</div>
+
+
+<form method="POST" action="/dashboard">
+    <p>
+        <label for="patid">Type in Patient ID:</label><br>
+        <input type="text" name="patid" ><br>
+    </p>
+    <!-- <input type="submit" value="Show Graph and Table" class="btn btn-secondary"> -->
+    <input type="hidden" name="btn_identifier" value="entrybutton" />
+    <input type="submit" value="Submit" class="btn btn-secondary">
+</form>
+
 {% endif %}
 
 </div>
+
+
 
 {% endblock %}

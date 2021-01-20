@@ -6,15 +6,6 @@
 
 {% block content %}
 
-<!-- <div class="container mt-5">
-
-    <div class="page-header">
-        <h1>Your upcoming appointments</h1>
-    </div>
-
-</div>
-<div class="container">{{ graph|safe }}</div> -->
-
 {% if medstaff == '0' %}
 <div class="container mt-5">
 
@@ -22,47 +13,85 @@
         <h1>Your upcoming appointments</h1>
     </div>
     
-</div>
-
 <div class="jumbotron bg-white">{{ table|safe }}</div>
-
-{% endif %}
-
-{% if medstaff == '1' and showtable == '1' %}
-<div class="container mt-5">
-
-    <div class="page-header">
-        <h1>Upcoming appointments</h1>
-    </div>
-    
 </div>
-
-<div class="jumbotron bg-white">{{ table|safe }}</div>
 
 {% endif %}
 
 {% if medstaff == '1' %}
 <div class="container mt-5">
-    <form class="form-signin" method="POST" action="/appointments">
-        <h1>Add a new appointment here</h1>
-        <input type="button" value="Load from EMR"><br><br>
-        <label for="who">Type in Patient ID:</label><br>
-        <input type="number" id="who" name="id" required><br>
-        <label for="when">Appointment Time</label><br>
-        <input type="date" id="when" name="time" required><br>
-        <label for="what">Procedure</label><br>
-        <input type="text" id="what" name="what"><br>
-        <label for="where">Location</label><br>
-        <input type="text" id="where" name="where"><br>
-        <label for="add_info">Link to Procedure explainer</label><br>
-        <input type="url" id="link" name="link"><br>
-        <label for="add_info">Additional Info</label><br>
-        <input type="text" id="add_info" name="add_info"><br>
-        <label for="smptms">Recurring?</label><br>
-        <input type="checkbox" id="recurring" name="recurring"><br>
-        <input type="submit">
+
+    <div class="page-header">
+        <h1>Add new appointments</h1>
+    </div>
+
+        <form class="form-signin" method="POST" action="/appointments">
+
+            <p>
+                <label>Appointment Date</label><br>
+                <input type="date" name="date" required><br>
+            </p>
+
+            <p>
+                <label>Appointment Time</label><br>
+                <input type="time" name="time" required><br>
+            </p>
+
+            <p>
+                <label for="procedure">Procedure</label><br>
+                <input type="text" id="procedure" name="procedure"><br>
+            </p>
+
+            <p>
+                <label for="loc">Location</label><br>
+                <input type="text" id="where" name="loc"><br>
+            </p>
+
+            <p>
+                <label for="link">Link to explanatory Video</label><br>
+                <input type="url" id="link" name="link"><br>
+            </p>
+
+            <p>
+                <label for="addinfo">Additional Info</label><br>
+                <input type="text" id="addinfo" name="addinfo"><br>
+            </p>
+               <!-- <label for="when">Appointment Time</label><br>
+            <input type="date" id="when" name="time" required><br>
+            <label for="what">Procedure</label><br>
+            <input type="text" id="what" name="what"><br>
+C
+            <label for="add_info">Link to Procedure explainer</label><br>
+            <input type="url" id="link" name="link"><br>
+
+            <label for="smptms">Recurring?</label><br>
+            <input type="checkbox" id="recurring" name="recurring"><br> -->
+            <input type="hidden" name="btn_identifier" value="newentrybutton" />
+            <input type="submit" value="Submit Entry" class="btn btn-secondary">
+        </form>
+    </div>
+
+    <div class="container mt-5">
+
+        <div class="page-header">
+            <h1>Your upcoming appointments</h1>
+        </div>
+        
+    <div class="jumbotron bg-white">{{ table|safe }}</div>
+    </div>
+
+    <div class="container mt-5">
+    <form method="POST" action="/appointments">
+        <p>
+            <label for="entryid">Type in Appointment ID:</label><br>
+            <input type="text" name="entryid" ><br>
+        </p>
+        <!-- <input type="submit" value="Show Graph and Table" class="btn btn-secondary"> -->
+        <input type="hidden" name="btn_identifier" value="deletebutton" />
+        <input type="submit" value="Delete Entry" class="btn btn-secondary">
     </form>
-</div>
+
+    </div>
 {% endif %}
 
 {% endblock %}
