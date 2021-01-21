@@ -8,100 +8,112 @@
 
 {% if medstaff == '0' %}
 
-<div class="container mt-5">
+<div class="container-fluid mt-5">
 
-    <div class="page-header">
-        <h1>How are you feeling?</h1>
-    </div>
+    <form action="/history" METHOD="POST" oninput="rangevalue.value = quantity.valueAsNumber">
 
-<form action="/history" METHOD="POST"> 
-    <p>
-    <textarea id="smptms" placeholder="Type in symptoms" name="symptoms"></textarea><br>
-    </p>
-    <p><label for="quantity">Overall Wellbeing (between 1 and 10):</label><br>
-    <input type="range" id="quantity" name="quantity" min="1" max="10" value="5" step="1"><br>
-    </p>
-    <input type="hidden" name="btn_identifier" value="newentrybutton" />
-    <input type="submit" value="Save Entry">
-</form>
+        <div class="page-header">
+            <div class="row welcome text-center">
+                <div class="col-6">
+                    <h2 class="font-weight-bold" >How are you feeling?</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="jumbotron mt-5">
+            <div class="container-fluid">
+                <div class="row welcome text-center">
+                    <div class="col-11">
+                        <h1 ckass="display-4"><small class="text-muted">Right now my wellbeing is a </small><output class="font-weight-bold" name="rangevalue" for="quantity">5</output><small class="text-muted"> out of 10</small></h1>
+                    </div>
+                </div>
+            </div>
+
+        
+            <div class="container mt-5">
+                <div class="form-group">
+                    <input type="range" class ="form-control-range" id="quantity" name="quantity" min="0" max="10" value="5" step="1">
+                </div>
+                <br>
+                <div class="form-group">
+                    <textarea class="form-control" id="smptms" placeholder="Type in symptoms" name="symptoms" rows="3"></textarea>
+                </div>
+                <br>
+                <input type="hidden" name="btn_identifier" value="newentrybutton" />
+                <input class="btn btn-info btn-lg btn-block" type="submit" value="Save Entry">
+            </div>
+        </div>
+
+        
+    </form>
 </div>
 
-<div class="container mt-5">
 
-<div class="page-header">
-    <h1>Your wellbeing history</h1>
+<div class="container-fluid padding">
+    <div>{{ graph|safe }}</div>
+    <div>{{ table|safe }}</div>
 </div>
-
-</div>
-
-<div class="jumbotron bg-white">{{ graph|safe }}</div>
-
-<div class="jumbotron bg-white">{{ table|safe }}</div>
 
 {% endif %}
 
 {% if medstaff == '1' %}
 
-<div class="container mt-5">
+<div class="container-fluid mt-5">
 
-    <div class="page-header">
-        <h1>How is the patient feeling?</h1>
-    </div>
+    <form action="/history" METHOD="POST" oninput="rangevalue.value = quantity.valueAsNumber">
 
-<form action="/history" METHOD="POST"> 
-    <p>
-    <textarea placeholder="Type in symptoms" name="symptoms" ></textarea><br>
-    </p>
-    <p></p><label for="quantity">Overall Wellbeing (between 1 and 10):</label><br>
-    <input type="range" class ="form-control-range" id="quantity" name="quantity" min="1" max="10" value="5" step="1"><br>
-    </p>
-    <input type="hidden" name="btn_identifier" value="newentrybutton" />
-    <input type="submit" value="Save Entry">
+        <div class="page-header">
+            <div class="row welcome text-center">
+                <div class="col-6">
+                    <h2 class="font-weight-bold" >How is the patient feeling?</h2>
+                </div>
+            </div>
+        </div>
 
-</form>
-</div>
-
-<!-- <div class="container mt-5">
-
-    <form method="POST" action="/history">
-        <p>
-            <label for="patid">Type in Patient ID:</label><br>
-            <input type="text" name="patid" ><br>
-        </p>
-        <input type="hidden" name="btn_identifier" value="showbutton" />
-        <input type="submit" value="Show Graph and Table" class="btn btn-secondary">
-    </form> -->
-
-<!-- </div> -->
-
-<div class="container mt-5">
-
-    <div class="page-header">
-        <h1>History Graph</h1>
-    </div>
-    <div class="container">{{ graph|safe }}</div>
-</div>
-
-<div class="container mt-5">
-
-    <div class="page-header">
-        <h1>History Table</h1>
-    </div>
-    <div class="container">{{ table|safe }}</div>
-</div>
-
-<div class="container mt-5">
-
-    <form method="POST" action="/history">
-        <p>
-            <label for="delete">Deletion of Entry:</label><br>
-            <input type="text" name="entryid" placeholder="Type in Entry ID"><br>
-        </p>
-        <input type="hidden" name="btn_identifier" value="deletebutton" />
-        <input type="submit" value="Delete Entry" class="btn btn-secondary">
+        <div class="jumbotron mt-5">
+            <div class="container-fluid">
+                <div class="row welcome text-center">
+                    <div class="col-12">
+                        <h1 ckass="display-4"><small class="text-muted">Right now the patient's wellbeing is a </small><output class="font-weight-bold" name="rangevalue" for="quantity">5</output><small class="text-muted"> out of 10</small></h1>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="container mt-5">
+                <div class="form-group">
+                    <input type="range" class ="form-control-range" id="quantity" name="quantity" min="0" max="10" value="5" step="1">
+                </div>
+                <br>
+                <div class="form-group">
+                    <textarea class="form-control" id="smptms" placeholder="Type in symptoms" name="symptoms" rows="3"></textarea>
+                </div>
+                <br>
+                <input type="hidden" name="btn_identifier" value="newentrybutton" />
+                <input class="btn btn-info btn-lg btn-block" type="submit" value="Save Entry">
+            </div>
+        </div>
+       
     </form>
-
 </div>
+
+
+<div class="container-fluid padding">
+    <div>{{ graph|safe }}</div>
+    <div>{{ table|safe }}</div>
+</div>
+
+<div class="container">
+    <form method="POST" action="/history">
+    <div class="form-group row">
+        <div class="col-sm-9">
+          <input type="text" name="entryid" class="form-control form-control-lg" id="colFormLabelLg" placeholder="Type in Entry ID according to the table above to delete">
+        </div>
+        <input type="hidden" name="btn_identifier" value="deletebutton" />
+        <input type="submit" value="Delete Entry" class="btn btn-danger">
+      </div>
+    </form>
+</div>
+
 {% endif %}
 
 {% endblock %}

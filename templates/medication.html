@@ -7,99 +7,117 @@
 {% block content %}
 
 {% if medstaff == '0' %}
-<div class="container mt-5">
+<div class="container-fluid mt-5">
 
     <div class="page-header">
-        <h1>Your current medication</h1>
+        <div class="row welcome text-center">
+            <div class="col-6">
+                <h2 class="font-weight-bold" >Current medication</h2>
+            </div>
+        </div>
     </div>
-    <div class="container">{{ table|safe }}</div>
+    
+    <div class="container-fluid padding">
+        <div>{{ table|safe }}</div>
+    </div>
+
 </div>
 {% endif %}
 
 {% if medstaff == '1' %}
-
-<div class="container mt-5">
-
-    <div class="page-header">
-        <h1>Add new medication</h1>
-    </div>
-
-<form method="POST" action="/medication">
-   
-    <p>
-    <label>Name of medication</label><br>
-    <input type="text" name="medname" required><br>
-    </p>
-
-    <p><label>Brand</label><br>
-    <input type="text" name="medbrand" required><br>
-    </p>
-
-    <p>
-    <label>Administer route</label><br>
-    <input type="text" name="admroute" required><br>
-    </p>
-
-    <p>
-    <label>Dose</label><br>
-    <input type="text" name="dose" required><br>
-    </p>
-
-    <p>
-    <label>Indication</label><br>
-    <input type="text" name ="indic" id="smptms"><br>
-    </p>
-    
-    <p>
-    <label>Morning</label><br>
-    <input type="number" id="quantity" name="morning" min="0" step="0.25" required><br>
-    </p>
-    
-    <p>
-    <label>Noon</label><br>
-    <input type="number" id="quantity" name="noon" min="0" step="0.25" required><br>
-    </p>
-    
-    <p><label>Evening</label><br>
-    <input type="number" id="quantity" name="evening" min="0" step="0.25" required><br>
-    </p>
-    
-    <p>
-    <label>Night</label><br>
-    <input type="number" id="quantity" name="night" min="0" step="0.25" required><br>
-    </p>
-
-    <p>
-    <label>Additional Information</label><br>
-    <input type="text" name="addinfo"><br>
-    </p>
-
-    <input type="hidden" name="btn_identifier" value="newentrybutton" />
-        <input type="submit" value="Submit Entry" class="btn btn-secondary">
-    <!-- <input type="submit" name="btn" value="Show Table"> -->
-</form>
-</div>
-
-<div class="container mt-5">
-
-    <div class="page-header">
-        <h1>Current medication</h1>
-    </div>
-    <div class="container">{{ table|safe }}</div>
-</div>
-
-<div class="container mt-5">
-
+<div class="container-fluid mt-5">
     <form method="POST" action="/medication">
-        <p>
-            <label for="entryid">Type in Medication ID:</label><br>
-            <input type="text" name="entryid" ><br>
-        </p>
-        <!-- <input type="submit" value="Show Graph and Table" class="btn btn-secondary"> -->
-        <input type="hidden" name="btn_identifier" value="deletebutton" />
-        <input type="submit" value="Delete Entry" class="btn btn-secondary">
-    </form>
+        <div class="page-header">
+            <div class="row welcome text-center">
+                <div class="col-6">
+                    <h2 class="font-weight-bold" >New medication</h2>
+                </div>
+            </div>
+        </div>
 
+        
+        <div class="jumbotron mt-5">
+            <div class="form-group">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6">
+                            <p>
+                                <label><b>Medication name</b></label><br>
+                                <input type="text" class="form-control" name="medname" required><br>
+                            </p>
+
+                            <p>
+                                <label><b>Brand</b></label><br>
+                                <input type="text" class="form-control" name="medbrand" required><br>
+                            </p>
+
+                            <p>
+                                <label><b>Administer route</b></label><br>
+                                <input type="text" class="form-control" name="admroute" required><br>
+                            </p>
+
+                            <p>
+                                <label><b>Dose</b></label><br>
+                                <input type="text" class="form-control" name="dose" required><br>
+                            </p>
+
+                            <p>
+                                <label><b>Indication</b></label><br>
+                                <input type="text" class="form-control" name ="indic" id="smptms"><br>
+                            </p>
+                        </div>
+
+                        <div class="col-6">
+                            <p>
+                                <label><b>Morning</b></label><br>
+                                <input type="number" id="quantity" class="form-control" name="morning" min="0" step="0.25" required><br>
+                            </p>
+                            
+                            <p>
+                                <label><b>Noon</b></label><br>
+                                <input type="number" id="quantity" class="form-control" name="noon" min="0" step="0.25" required><br>
+                            </p>
+                            
+                            <p>
+                                <label><b>Evening</b></label><br>
+                                <input type="number" id="quantity" class="form-control" name="evening" min="0" step="0.25" required><br>
+                            </p>
+                            
+                            <p>
+                                <label><b>Night</b></label><br>
+                                <input type="number" id="quantity" class="form-control" name="night" min="0" step="0.25" required><br>
+                            </p>
+
+                                                    
+                            <p>
+                                <label><b>Additional Information</b></label><br>
+                                <input type="text" class="form-control" name="addinfo"><br>
+                            </p>
+                        </div>
+                        <br>
+                        <input type="hidden" name="btn_identifier" value="newentrybutton" />
+                        <input type="submit" value="Save Entry" class="btn btn-info btn-lg btn-block">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container-fluid padding">
+    <div>{{ table|safe }}</div>
+</div>
+
+<div class="container">
+    <form method="POST" action="/medication">
+    <div class="form-group row">
+        <div class="col-sm-9">
+          <input type="text" name="entryid" class="form-control form-control-lg" id="colFormLabelLg" placeholder="Type in Medication ID according to the table above to delete">
+        </div>
+        <input type="hidden" name="btn_identifier" value="deletebutton" />
+        <input type="submit" value="Delete Entry" class="btn btn-danger">
+      </div>
+    </form>
 </div>
 
 {% endif %}

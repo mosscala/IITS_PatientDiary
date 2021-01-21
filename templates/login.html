@@ -6,32 +6,37 @@
 
 {% block content %}
 
-<div class="container mt-5">
+<div class="container-fluid mt-5">
 
-  <div class="page-header">
-      <h1>Please log in</h1>
-  </div>
+  <form class="form-login" method="POST" action="/login">
+    <div class="page-header">
+      <div class="row welcome text-center">
+          <div class="col-6">
+              <h2 class="font-weight-bold" >Please log in</h2>
+          </div>
+      </div>
+    </div>
 
-    <form class="form-login" method="POST" action="/login">
-
-    <p>
-    <label for="email"><b>Email</b></label><br>
-    <input type="text" placeholder="Enter Email" name="email" required>
-    </p>
-
-    <p>
-    <label for="psw"><b>Password</b></label><br>
-    <input type="password" placeholder="Enter Password" name="psw" required>
-    </p>
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-3">
+          <p>  
+          <label for="email"><b>Email</b></label><br>
+            <input type="email" placeholder="Enter Email" name="email" required>
+          </p>
+        
+          <p>
+            <label for="psw"><b>Password</b></label><br>
+            <input type="password" placeholder="Enter Password" name="psw" required>
+          </p>
+        </div>
+      </div>
 
     <div class="clearfix">
-      <button type="submit" class="btn btn-primary btn-lg">Login</button>
+      <button type="submit" class="btn btn-info btn-lg">Login</button>
 
-    <label>
-      <input type="checkbox" checked="checked" name="remember"> Remember me
-    </label>
-    </form>
-  </div>
+  </form>
+</div>  
 
 {% if msg == '1' %}
 <div class="alert alert-danger" role="alert">

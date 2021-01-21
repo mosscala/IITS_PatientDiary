@@ -7,91 +7,102 @@
 {% block content %}
 
 {% if medstaff == '0' %}
-<div class="container mt-5">
+<div class="container-fluid mt-5">
 
     <div class="page-header">
-        <h1>Your upcoming appointments</h1>
+        <div class="row welcome text-center">
+            <div class="col-6">
+                <h2 class="font-weight-bold" >Upcoming appointments</h2>
+            </div>
+        </div>
     </div>
     
-<div class="jumbotron bg-white">{{ table|safe }}</div>
+    <div class="container-fluid padding">
+        <div>{{ table|safe }}</div>
+    </div>
+
 </div>
 
 {% endif %}
 
 {% if medstaff == '1' %}
-<div class="container mt-5">
-
-    <div class="page-header">
-        <h1>Add new appointments</h1>
-    </div>
-
-        <form class="form-signin" method="POST" action="/appointments">
-
-            <p>
-                <label>Appointment Date</label><br>
-                <input type="date" name="date" required><br>
-            </p>
-
-            <p>
-                <label>Appointment Time</label><br>
-                <input type="time" name="time" required><br>
-            </p>
-
-            <p>
-                <label for="procedure">Procedure</label><br>
-                <input type="text" id="procedure" name="procedure"><br>
-            </p>
-
-            <p>
-                <label for="loc">Location</label><br>
-                <input type="text" id="where" name="loc"><br>
-            </p>
-
-            <p>
-                <label for="link">Link to explanatory Video</label><br>
-                <input type="url" id="link" name="link"><br>
-            </p>
-
-            <p>
-                <label for="addinfo">Additional Info</label><br>
-                <input type="text" id="addinfo" name="addinfo"><br>
-            </p>
-               <!-- <label for="when">Appointment Time</label><br>
-            <input type="date" id="when" name="time" required><br>
-            <label for="what">Procedure</label><br>
-            <input type="text" id="what" name="what"><br>
-C
-            <label for="add_info">Link to Procedure explainer</label><br>
-            <input type="url" id="link" name="link"><br>
-
-            <label for="smptms">Recurring?</label><br>
-            <input type="checkbox" id="recurring" name="recurring"><br> -->
-            <input type="hidden" name="btn_identifier" value="newentrybutton" />
-            <input type="submit" value="Submit Entry" class="btn btn-secondary">
-        </form>
-    </div>
-
-    <div class="container mt-5">
-
+<div class="container-fluid mt-5">
+    <form class="form-signin" method="POST" action="/appointments">
         <div class="page-header">
-            <h1>Your upcoming appointments</h1>
+            <div class="row welcome text-center">
+                <div class="col-6">
+                    <h2 class="font-weight-bold" >New appointment</h2>
+                </div>
+            </div>
         </div>
-        
-    <div class="jumbotron bg-white">{{ table|safe }}</div>
-    </div>
 
-    <div class="container mt-5">
-    <form method="POST" action="/appointments">
-        <p>
-            <label for="entryid">Type in Appointment ID:</label><br>
-            <input type="text" name="entryid" ><br>
-        </p>
-        <!-- <input type="submit" value="Show Graph and Table" class="btn btn-secondary"> -->
-        <input type="hidden" name="btn_identifier" value="deletebutton" />
-        <input type="submit" value="Delete Entry" class="btn btn-secondary">
+
+        <div class="jumbotron mt-5">
+            <div class="form-group">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4">
+                            <p>
+                                <label for="procedure"><b>Procedure</b></label><br>
+                                <input type="text" class="form-control" id="procedure" name="procedure"><br>
+                            </p>
+
+                            <p>
+                                <label for="loc"><b>Location</b></label><br>
+                                <input type="text" class="form-control" id="where" name="loc"><br>
+                            </p>
+                        </div>
+                    
+                        <div class="col-4">
+                            <p>
+                                <label><b>Appointment Date</b></label><br>
+                                <input type="date" class="form-control" name="date" required><br>
+                            </p>
+            
+                            <p>
+                                <label><b>Appointment Time</b></label><br>
+                                <input type="time" class="form-control" name="time" required><br>
+                            </p>
+                        </div>
+
+                        <div class="col-4">
+                            <p>
+                                <label for="link"><b>Link to explanatory Video</b></label><br>
+                                <input type="url" class="form-control" id="link" name="link"><br>
+                            </p>
+
+                            <p>
+                                <label for="addinfo"><b>Additional Info</b></label><br>
+                                <input type="text" class="form-control" id="addinfo" name="addinfo"><br>
+                            </p>
+                        </div> 
+                    </div>
+                    <br>
+                    <input type="hidden" name="btn_identifier" value="newentrybutton" />
+                    <input type="submit" value="Save Entry" class="btn btn-info btn-lg btn-block">
+                </div>
+            </div>
+        </div>
     </form>
+</div>
 
-    </div>
+  
+<div class="container-fluid padding">
+    <div>{{ table|safe }}</div>
+</div>
+
+<div class="container">
+    <form method="POST" action="/appointments">
+    <div class="form-group row">
+        <div class="col-sm-9">
+          <input type="text" name="entryid" class="form-control form-control-lg" id="colFormLabelLg" placeholder="Type in Appointment ID according to the table above to delete">
+        </div>
+        <input type="hidden" name="btn_identifier" value="deletebutton" />
+        <input type="submit" value="Delete Entry" class="btn btn-danger">
+      </div>
+    </form>
+</div>
+
 {% endif %}
 
 {% endblock %}

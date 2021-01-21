@@ -5,34 +5,42 @@
 {% set currentvar = 'dashboard' %}
 
 {% block content %}
-<div class="container mt-5">
-
+<div class="container-fluid mt-5">
+    <!-- <form action="/history" METHOD="POST" oninput="rangevalue.value = quantity.valueAsNumber"> -->
     <div class="page-header">
-        <h1>Logged in as: </h1>
+        <div class="row welcome text-center">
+            <div class="col-6">
+                <h2 class="font-weight-bold" >Welcome! <small>Please choose a patient before proceeding</small></h2><br>
+            </div>
+        </div>
     </div>
-   
-{% if medstaff == '0' %}
-<h1>patient</h1>
-{% endif %}
 
-{% if medstaff == '1' %}
-<h1>medical staff</h1>
-<div class="jumbotron bg-white">{{ table|safe }}</div>
+    <div class="container-fluid padding">
+        <div>{{ table|safe }}</div>
+    </div>
 
+    <div class="container">
+        <form method="POST" action="/dashboard">
+        <div class="form-group row">
+            <div class="col-sm-9">
+            <input type="text" name="patid" class="form-control form-control-lg" id="colFormLabelLg" placeholder="Choose Patient ID from the table above to proceed">
+            </div>
+            <input type="hidden" name="btn_identifier" value="entrybutton" />
+            <input type="submit" value="Choose Patient" class="btn btn-info">
+        </div>
+        </form>
+    </div>
 
-<form method="POST" action="/dashboard">
+</div>
+
+<!-- <form method="POST" action="/dashboard">
     <p>
         <label for="patid">Type in Patient ID:</label><br>
         <input type="text" name="patid" ><br>
     </p>
-    <!-- <input type="submit" value="Show Graph and Table" class="btn btn-secondary"> -->
     <input type="hidden" name="btn_identifier" value="entrybutton" />
     <input type="submit" value="Submit" class="btn btn-secondary">
-</form>
-
-{% endif %}
-
-</div>
+</form> -->
 
 
 
