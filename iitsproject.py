@@ -1,7 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request, session
 import sqlite3
-from database import createindtable, createusertable, deleteappointmententry, deletewbentry, deletemedentry, fetchhistory, fetchemail, fetchmedstaff, fetchpassword, fetchrowid, createmedtablestaff, createappointmenttable, createappointmenttablestaff, createindhistory, createindhistorystafftable, createmedtable, newentrypatient, newuser, newentrymed, newappointment
-
+from database import fetchname, createindtable, createusertable, deleteappointmententry, deletewbentry, deletemedentry, fetchhistory, fetchemail, fetchmedstaff, fetchpassword, fetchrowid, createmedtablestaff, createappointmenttable, createappointmenttablestaff, createindhistory, createindhistorystafftable, createmedtable, newentrypatient, newuser, newentrymed, newappointment
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "djfsdjf"
@@ -99,35 +98,13 @@ def dashboard():
                 session["patidofinterest"] = request.form.get('patid')
                 table = createusertable()
                 return redirect(url_for("history"))
-                #return render_template("dashboard.html", table = table,  medstaff = str(mdstf))
             else:
                 table = createusertable()
-                return render_template("dashboard.html", table = table,  medstaff = str(mdstf))
+                return render_template("dashboard.html", table = table,  medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]))
         else:
            return redirect(url_for("history")) 
     else:
         return redirect(url_for("login"))
-
-# @app.route("/howareyou",  methods=["POST", "GET"])
-# def howareyou():
-#     if "medstaff" in session:
-#         mdstf = session["medstaff"]
-#         #graph = createappointmenttable()
-#         if "patidofinterest" in session:
-#             return "Hey" + session["patidofinterest"]
-#         if request.method == "POST":
-#             new_symptom = request.form.get('symptoms')
-#             new_wellbeingscore = request.form.get('quantity')
-#             if mdstf == 0:
-#                 patid = session["userid"]
-#             elif mdstf == 1:
-#                 patid = request.form.get('patid')
-#             newentrypatient(new_wellbeingscore, new_symptom, patid)
-#             return redirect(url_for("howareyou", medstaff = str(mdstf)))
-#         else:
-#             return render_template("howareyou.html", medstaff = str(mdstf))
-#     else:
-#         return redirect(url_for("login"))
 
 @app.route("/history", methods=["POST", "GET"])
 def history():        
@@ -141,7 +118,7 @@ def history():
                 new_symptom = request.form.get('symptoms')
                 new_wellbeingscore = request.form.get('quantity')
                 patid = session["userid"]
-                newentrypatient(new_wellbeingscore, new_symptom, patid)
+                newentrypatient(new_wellbeingscore, new_symptom, patid, patid)
                 graph = createindhistory(userid)
                 table = createindtable(userid)
                 return render_template("history.html", table = table, graph = graph, medstaff = str(mdstf))
@@ -157,20 +134,20 @@ def history():
                     deletewbentry(entryid)
                     table = createindhistorystafftable(patid)
                     graph = createindhistory(patid)
-                    return render_template("history.html", graph = graph, table = table, medstaff = str(mdstf))
+                    return render_template("history.html", graph = graph, table = table, medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]))
                 elif request.form["btn_identifier"] == "newentrybutton":
                     patid = session["patidofinterest"]
                     new_symptom = request.form.get('symptoms')
                     new_wellbeingscore = request.form.get('quantity')
-                    newentrypatient(new_wellbeingscore, new_symptom, patid)
+                    newentrypatient(new_wellbeingscore, new_symptom, patid, userid)
                     table = createindhistorystafftable(patid)
                     graph = createindhistory(patid)
-                    return render_template("history.html", graph = graph, table = table, medstaff = str(mdstf))
+                    return render_template("history.html", graph = graph, table = table, medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]))
             else:
                 patid = session["patidofinterest"]
                 table = createindhistorystafftable(patid)
                 graph = createindhistory(session["patidofinterest"])
-                return render_template("history.html", graph = graph, table = table, medstaff = str(mdstf))
+                return render_template("history.html", graph = graph, table = table, medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]))
     else:
         return redirect(url_for("login"))
 
@@ -188,7 +165,7 @@ def appointments():
                 entryid = request.form.get('entryid')
                 deleteappointmententry(entryid)
                 table = createappointmenttablestaff(patid)
-                return render_template("appointments.html", table = table, medstaff = str(mdstf))
+                return render_template("appointments.html", table = table, medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]))
             elif request.form["btn_identifier"] == "newentrybutton":
                 medstaffid = session["userid"]
                 patid = (session["patidofinterest"])
@@ -199,12 +176,11 @@ def appointments():
                 link = request.form.get('link')
                 newappointment(apptime, loc, procedure, link, addinfo, patid, medstaffid)
                 table = createappointmenttablestaff((session["patidofinterest"]))
-                return render_template("appointments.html", table = table,  medstaff = str(mdstf))
-                #return render_template("appointments.html", medstaff = str(mdstf), table = createappointmenttable(uid=who), showtable = '1')
+                return render_template("appointments.html", table = table,  medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]))
         else:
             if mdstf == 1:
                 table = createappointmenttablestaff((session["patidofinterest"]))
-                return render_template("appointments.html", medstaff = str(mdstf), table = table)
+                return render_template("appointments.html", medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]), table = table)
             else:
                 table = createappointmenttable(userid)
                 return render_template("appointments.html", medstaff = str(mdstf), table = table)
@@ -225,7 +201,7 @@ def medication():
                         entryid = request.form.get('entryid')
                         deletemedentry(entryid)
                         table = createmedtablestaff(patid)
-                        return render_template("medication.html", table = table, medstaff = str(mdstf))
+                        return render_template("medication.html", table = table, medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]))
                     elif request.form["btn_identifier"] == "newentrybutton":
                         patid = (session["patidofinterest"])
                         medstaffid = session["userid"]
@@ -240,12 +216,11 @@ def medication():
                         night = request.form.get("night")
                         addinfo = request.form.get("addinfo")
                         newentrymed(patid, medstaffid, medname, medbrand, admroute, dose, indic, morning, noon, evening, night, addinfo)
-                        #return render_template("medication.html", medstaff = str(mdstf))
-                        return render_template("medication.html", table = createmedtablestaff(patid),  medstaff = str(mdstf))
+                        return render_template("medication.html", table = createmedtablestaff(patid),  medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]))
                 else:
                     patid = (session["patidofinterest"])
                     table = createmedtablestaff(patid)
-                    return render_template("medication.html", table = table, medstaff = str(mdstf))
+                    return render_template("medication.html", table = table, medstaff = str(mdstf), patidandname = "ID: " + str(session["patidofinterest"]) + fetchname(session["patidofinterest"]))
             else:
                 patid = session["userid"]
                 table = createmedtable(patid)

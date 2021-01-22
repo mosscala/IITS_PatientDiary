@@ -31,6 +31,18 @@ def fetchfullname(rowid):
     except:
         return False
 
+def fetchname(rowid):
+    conn = sqlite3.connect('patientdiary.db')
+    c = conn.cursor()
+    c.execute("SELECT firstname, lastname FROM users WHERE rowid = ? ", (rowid,))
+    
+    try:
+        fullname = c.fetchall()
+        fullname = ' '.join(fullname[0])
+        return ", Name: " + fullname
+    except:
+        return ''
+
 def fetchpassword(inputemail):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
@@ -70,11 +82,11 @@ def newentry(wbscore, symptom):
     conn.commit()
     conn.close()
 
-def newentrypatient(wbscore, symptom, uid):
+def newentrypatient(wbscore, symptom, patid, userid):
     conn = sqlite3.connect('patientdiary.db')
     c = conn.cursor()
 
-    c.execute("INSERT INTO indwb VALUES (?,?,datetime('now', 'localtime'), ?)", (wbscore, symptom, uid))
+    c.execute("INSERT INTO indwb VALUES (?,?,datetime('now', 'localtime'), ?, ?)", (wbscore, symptom, patid, userid))
 
     conn.commit()
     conn.close()
@@ -321,14 +333,19 @@ def createindtable(patid):
     time = []
     wbscore = []
     symptoms = []
+    madebyids = []
     
     for i in fetchhistory(patid):
         time.append(i[3])
         wbscore.append(i[1])
         symptoms.append(i[2])
+        if fetchfullname(i[5]).startswith("0"):
+            madebyids.append("Yourself")
+        else:
+            madebyids.append(fetchfullname(i[5]))
     
-    fig = go.Figure(data=[go.Table(header=dict(values=["Entry Date", "Score", "Symptoms/Observations"]),
-                 cells=dict(values=[time, wbscore, symptoms]))
+    fig = go.Figure(data=[go.Table(header=dict(values=["Entry Date", "Score", "Symptoms/Observations", "Entry Made By"]),
+                 cells=dict(values=[time, wbscore, symptoms, madebyids]))
                      ])
        
     #fig.show()            
@@ -340,15 +357,20 @@ def createindhistorystafftable(patid):
     time = []
     wbscore = []
     symptoms = []
+    madebyids = []
     
     for i in fetchhistory(patid):
         rowid.append(i[0])
         time.append(i[3])
         wbscore.append(i[1])
         symptoms.append(i[2])
+        if fetchfullname(i[5]).startswith("0"):
+            madebyids.append("Patient")
+        else:
+            madebyids.append(fetchfullname(i[5]))
     
-    fig = go.Figure(data=[go.Table(header=dict(values=["Entry ID", "Entry Date", "Score", "Symptoms/Observations"]),
-                 cells=dict(values=[rowid, time, wbscore, symptoms]))
+    fig = go.Figure(data=[go.Table(header=dict(values=["Entry ID", "Entry Date", "Score", "Symptoms/Observations", "Entry Made By"]),
+                 cells=dict(values=[rowid, time, wbscore, symptoms, madebyids]))
                      ])
        
     #fig.show()            
@@ -440,7 +462,8 @@ c = conn.cursor()
 #    wellbeing integer,
 #    symptoms text,
 #    time text,
-#    userid int
+#    userid int,
+#    madeby int
 #    )""")
 
 
@@ -463,7 +486,7 @@ c = conn.cursor()
 
 
 #Deleting a table
-# c.execute("DROP TABLE users")
+# c.execute("DROP TABLE indwb")
 
 # #Create Users
 # c.execute("""CREATE TABLE users (
